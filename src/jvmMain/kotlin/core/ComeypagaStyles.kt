@@ -1,3 +1,5 @@
+package core
+
 import androidx.compose.ui.graphics.Color
 
 object ComeypagaStyles {

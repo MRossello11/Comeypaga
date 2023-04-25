@@ -1,4 +1,4 @@
-package components
+package core.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Row

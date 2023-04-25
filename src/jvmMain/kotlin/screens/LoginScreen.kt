@@ -14,7 +14,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import components.AppHeader
+import core.components.AppHeader
 import feature_login.presentation.login.LoginController
 import feature_login.presentation.login.LoginEvent
 import feature_login.presentation.login.LoginState
