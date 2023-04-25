@@ -3,8 +3,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
-import feature_login.presentation.view.LoginController
-import retrofit2.Retrofit
+import feature_login.presentation.login.LoginController
 import screens.LoginScreen
 import service.createRetrofit
 

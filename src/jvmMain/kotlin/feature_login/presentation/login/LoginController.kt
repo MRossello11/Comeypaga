@@ -1,4 +1,4 @@
-package feature_login.presentation.view
+package feature_login.presentation.login
 
 import feature_login.data.data_source.LoginDataSource
 import feature_login.domain.model.LoginRequest
@@ -8,7 +8,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import retrofit2.Retrofit
 
 class LoginController(retrofit: Retrofit) {

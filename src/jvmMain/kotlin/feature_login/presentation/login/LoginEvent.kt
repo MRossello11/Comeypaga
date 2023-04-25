@@ -1,4 +1,4 @@
-package feature_login.presentation.view
+package feature_login.presentation.login
 
 sealed class LoginEvent{
     data class UsernameEntered(val value: String): LoginEvent()
