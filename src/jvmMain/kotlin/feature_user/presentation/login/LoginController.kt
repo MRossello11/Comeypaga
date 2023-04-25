@@ -1,7 +1,7 @@
-package feature_login.presentation.login
+package feature_user.presentation.login
 
-import feature_login.data.data_source.LoginDataSource
-import feature_login.domain.model.LoginRequest
+import feature_user.data.data_source.UserDataSource
+import feature_user.domain.model.LoginRequest
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -14,7 +14,7 @@ class LoginController(retrofit: Retrofit) {
     private val _loginState = MutableStateFlow(LoginState())
     val loginState = _loginState.asStateFlow()
 
-    private val loginDataSource: LoginDataSource = retrofit.create(LoginDataSource::class.java)
+    private val userDataSource: UserDataSource = retrofit.create(UserDataSource::class.java)
 
 
     fun onEvent(event: LoginEvent) {
@@ -36,7 +36,7 @@ class LoginController(retrofit: Retrofit) {
 
             LoginEvent.Login -> {
                 CoroutineScope(Dispatchers.IO).launch{
-                    val response = loginDataSource.login(
+                    val response = userDataSource.login(
                         LoginRequest(
                             username =  _loginState.value.username,
                             password =  _loginState.value.password,

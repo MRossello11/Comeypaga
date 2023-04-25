@@ -4,9 +4,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import core.Constants
-import feature_login.presentation.login.LoginController
-import screens.LoginScreen
-import service.createRetrofit
+import feature_user.presentation.login.LoginController
+import feature_user.presentation.login.LoginScreen
+import core.service.createRetrofit
 
 @Composable
 @Preview

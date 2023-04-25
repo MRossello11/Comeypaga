@@ -1,4 +1,4 @@
-package feature_login.domain.model
+package feature_user.domain.model
 
 import com.google.gson.annotations.SerializedName
 

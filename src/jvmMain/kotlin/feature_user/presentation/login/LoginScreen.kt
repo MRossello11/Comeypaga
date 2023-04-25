@@ -1,4 +1,4 @@
-package screens
+package feature_user.presentation.login
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
@@ -15,9 +15,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import core.components.AppHeader
-import feature_login.presentation.login.LoginController
-import feature_login.presentation.login.LoginEvent
-import feature_login.presentation.login.LoginState
 
 @Composable
 fun LoginScreen(
