@@ -7,11 +7,21 @@ import core.Constants
 import feature_user.presentation.login.LoginController
 import feature_user.presentation.login.LoginScreen
 import core.service.createRetrofit
+import feature_user.data.UserRepositoryImpl
+import feature_user.data.data_source.UserDataSource
+import feature_user.domain.use_cases.LoginUseCase
+import feature_user.domain.use_cases.UserUseCases
 
 @Composable
 @Preview
 fun App() {
-    val loginController = LoginController(createRetrofit(Constants.WebService.BASE_URL))
+    // todo: use dependency injection
+    val useCases = UserUseCases(
+        loginUseCase = LoginUseCase(UserRepositoryImpl(createRetrofit(Constants.WebService.BASE_URL).create(UserDataSource::class.java)))
+    )
+    val loginController =
+        LoginController(useCases)
+
     MaterialTheme {
         LoginScreen(loginController)
     }
