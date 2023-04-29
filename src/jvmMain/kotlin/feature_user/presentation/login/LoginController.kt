@@ -1,7 +1,6 @@
 package feature_user.presentation.login
 
 import feature_user.domain.model.LoginRequest
-import feature_user.domain.repository.UserRepository
 import feature_user.domain.use_cases.UserUseCases
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -41,7 +40,7 @@ class LoginController(
                             _loginState.update { currentState ->
                                 currentState.copy(
                                     wsReturnCode = errorCode,
-
+                                    user = user
                                 )
                             }
                         }
