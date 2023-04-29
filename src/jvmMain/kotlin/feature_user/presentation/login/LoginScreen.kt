@@ -8,9 +8,7 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -22,6 +20,14 @@ fun LoginScreen(
 ) {
 
     val viewState: LoginState by loginController.loginState.collectAsState()
+
+    var user: String by remember {
+        mutableStateOf("")
+    }
+
+    var password: String by remember {
+        mutableStateOf("")
+    }
 
     Column(
         modifier = Modifier
@@ -39,14 +45,16 @@ fun LoginScreen(
         )
 
         TextField(
-            value = viewState.username,
+            value = user,
             onValueChange = {
+                user = it
                 loginController.onEvent(LoginEvent.UsernameEntered(it))
             }
         )
         TextField(
-            value = viewState.password,
+            value = password,
             onValueChange = {
+                password = it
                 loginController.onEvent(LoginEvent.PasswordEntered(it))
             }
         )
