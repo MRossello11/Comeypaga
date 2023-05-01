@@ -1,7 +1,11 @@
 import androidx.compose.desktop.ui.tooling.preview.Preview
+import androidx.compose.material.Colors
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
+import androidx.compose.ui.window.WindowState
 import androidx.compose.ui.window.application
 import core.Constants
 import feature_user.presentation.login.LoginController
@@ -22,13 +26,33 @@ fun App() {
     val loginController =
         LoginController(useCases)
 
-    MaterialTheme {
+    MaterialTheme(
+        colors = Colors(
+            primary = Color(0xff33cc33),
+            onPrimary = Color(0xffffffff),
+            primaryVariant = Color(0x2FBC2F),
+            secondary = Color(0xff2FBCBC),
+            onSecondary = Color(0xffffffff),
+            secondaryVariant = Color(0xff07A59B),
+            background = Color(0xffffffff),
+            onBackground = Color(0xff000000),
+            isLight = false,
+            error = Color(0xffB00020),
+            onError = Color(0xff6e00ee),
+            surface = Color(0xffffffff),
+            onSurface = Color(0xff000000),
+        )
+    ) {
         LoginScreen(loginController)
     }
 }
 
 fun main() = application {
-    Window(onCloseRequest = ::exitApplication) {
+    Window(
+        onCloseRequest = ::exitApplication,
+        resizable = false,
+        state = WindowState(width = 400.dp, height = 775.dp),
+    ) {
         App()
     }
 }
