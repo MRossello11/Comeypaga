@@ -34,7 +34,7 @@ fun LoginScreen(
             .fillMaxSize()
     ) {
 
-        AppHeader("Come Y paga")
+        AppHeader("Come y paga")
 
         Image(
             modifier = Modifier
