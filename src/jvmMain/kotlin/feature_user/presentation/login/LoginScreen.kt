@@ -29,6 +29,7 @@ import feature_user.domain.use_cases.UserUseCases
 @Composable
 fun LoginScreen(
     loginController: LoginController,
+    onResetPasswordClick: () -> Unit
 ) {
 
     val viewState: LoginState by loginController.loginState.collectAsState()
@@ -84,8 +85,7 @@ fun LoginScreen(
 
         Text(
             modifier = Modifier.clickable {
-                //todo: navigate to reset password screen
-                println("Reset password")
+                onResetPasswordClick()
             },
             text = "Reset password",
             textDecoration = TextDecoration.Underline,
@@ -103,8 +103,7 @@ fun LoginScreen(
             PrimaryButton(
                 modifier = Modifier.fillMaxWidth(),
                 onClick = {
-                    // todo
-                    println("Create account")
+                    onResetPasswordClick()
                 },
                 content = "Create account"
             )
@@ -135,6 +134,9 @@ fun PreviewLoginScreen(){
         LoginController(useCases)
 
     MaterialTheme(appColors){
-        LoginScreen(loginController)
+        LoginScreen(
+            loginController = loginController,
+            onResetPasswordClick = {}
+        )
     }
 }

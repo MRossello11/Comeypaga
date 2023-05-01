@@ -32,6 +32,10 @@ kotlin {
                 // https://mvnrepository.com/artifact/com.google.code.gson/gson
                 implementation("com.google.code.gson:gson:2.10.1")
                 runtimeOnly("androidx.compose.foundation:foundation:1.4.0")
+                // navigation
+                implementation("com.arkivanov.decompose:decompose:1.0.0-beta-01")
+                implementation("com.arkivanov.decompose:extensions-compose-jetbrains:1.0.0-beta-01")
+                implementation("com.arkivanov.essenty:parcelable:1.0.0")
             }
         }
         val jvmTest by getting
