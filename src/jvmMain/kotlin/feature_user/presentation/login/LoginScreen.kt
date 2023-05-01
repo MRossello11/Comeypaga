@@ -29,7 +29,7 @@ import feature_user.domain.use_cases.UserUseCases
 @Composable
 fun LoginScreen(
     loginController: LoginController,
-    onResetPasswordClick: () -> Unit
+    onResetPasswordClick: () -> Unit,
 ) {
 
     val viewState: LoginState by loginController.loginState.collectAsState()
@@ -48,7 +48,11 @@ fun LoginScreen(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
-        AppHeader("Come y paga")
+        AppHeader(
+            title = "Come y paga",
+            showBackButton = false,
+            onClickBack = {}
+        )
 
         Image(
             modifier = Modifier
