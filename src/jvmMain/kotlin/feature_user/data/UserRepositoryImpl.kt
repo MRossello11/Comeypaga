@@ -1,7 +1,9 @@
 package feature_user.data
 
+import core.model.BaseResponse
 import feature_user.data.data_source.UserDataSource
 import feature_user.domain.model.LoginRequest
+import feature_user.domain.model.ResetPasswordRequest
 import feature_user.domain.model.User
 import feature_user.domain.repository.UserRepository
 import java.text.SimpleDateFormat
@@ -44,5 +46,11 @@ class UserRepositoryImpl(
 
     override fun registry() {
         TODO("Not yet implemented")
+    }
+
+    override suspend fun resetPassword(resetPasswordRequest: ResetPasswordRequest, callback: (response: BaseResponse) -> Unit) {
+        val response = userDataSource.resetPassword(resetPasswordRequest)
+
+        callback(BaseResponse(response.code(), response.message()))
     }
 }

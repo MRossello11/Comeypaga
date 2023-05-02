@@ -24,6 +24,7 @@ import core.service.createRetrofit
 import feature_user.data.UserRepositoryImpl
 import feature_user.data.data_source.UserDataSource
 import feature_user.domain.use_cases.LoginUseCase
+import feature_user.domain.use_cases.RestPasswordUseCase
 import feature_user.domain.use_cases.UserUseCases
 
 @Composable
@@ -127,11 +128,17 @@ fun LoginScreen(
 @Composable
 @Preview
 fun PreviewLoginScreen(){
+    val repoImpl = UserRepositoryImpl(
+        createRetrofit(Constants.WebService.BASE_URL).create(
+            UserDataSource::class.java)
+    )
+
     val useCases = UserUseCases(
         loginUseCase = LoginUseCase(
-            UserRepositoryImpl(
-                createRetrofit(Constants.WebService.BASE_URL).create(
-                    UserDataSource::class.java))
+            repoImpl
+        ),
+        resetPassword = RestPasswordUseCase(
+            repoImpl
         )
     )
     val loginController =
