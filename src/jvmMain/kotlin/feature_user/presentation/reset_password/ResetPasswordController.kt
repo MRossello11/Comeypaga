@@ -1,12 +1,11 @@
 package feature_user.presentation.reset_password
 
+import feature_user.domain.model.InvalidResetPasswordRequest
 import feature_user.domain.model.ResetPasswordRequest
 import feature_user.domain.use_cases.UserUseCases
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
 class ResetPasswordController(
@@ -15,6 +14,9 @@ class ResetPasswordController(
 
     private val _resetPasswordState = MutableStateFlow(ResetPasswordState())
     val resetPasswordState = _resetPasswordState.asStateFlow()
+
+    private val _eventFlow = MutableSharedFlow<UiEvent>()
+    val eventFlow = _eventFlow.asSharedFlow()
 
     fun onEvent(event: ResetPasswordEvent){
         when(event){
@@ -47,33 +49,36 @@ class ResetPasswordController(
             }
             is ResetPasswordEvent.ResetPassword -> {
                 CoroutineScope(Dispatchers.IO).launch {
-                    // todo validate
-                    userUseCases.resetPassword(
-                        resetPasswordRequest = ResetPasswordRequest(
-                            username = _resetPasswordState.value.username,
-                            newPassword = _resetPasswordState.value.password,
-                        ),
-                        callback = {
-                            _resetPasswordState.update { state ->
-                                state.copy(
-                                    resetPasswordResponse = it,
-                                    responseEventConsumed = false
-                                )
-                            }
+                    try {
+                        userUseCases.resetPassword(
+                            resetPasswordRequest = ResetPasswordRequest(
+                                username = _resetPasswordState.value.username,
+                                newPassword = _resetPasswordState.value.password,
+                                passwordConfirmation = _resetPasswordState.value.passwordConfirmation
+                            ),
+                            callback = {
+                                _resetPasswordState.update { state ->
+                                    state.copy(
+                                        resetPasswordResponse = it,
+                                    )
+                                }
 
-                        }
-                    )
+                                launch{
+                                    _eventFlow.emit(UiEvent.ShowDialog(it.message!!))
+                                }
+                            }
+                        )
+
+                    } catch (irpr: InvalidResetPasswordRequest){
+                        _eventFlow.emit(UiEvent.ShowDialog(irpr.message ?: "Error"))
+                    }
                 }
             }
         }
 
     }
 
-    fun consumeResponseEvent(){
-        _resetPasswordState.update { state ->
-            state.copy(
-                responseEventConsumed = true
-            )
-        }
+    sealed class UiEvent{
+        data class ShowDialog(val message: String): UiEvent()
     }
 }

@@ -5,6 +5,5 @@ data class ResetPasswordState(
     val username: String = "",
     val password: String = "",
     val passwordConfirmation: String = "",
-    val resetPasswordResponse: BaseResponse = BaseResponse(),
-    val responseEventConsumed: Boolean = true
+    val resetPasswordResponse: BaseResponse = BaseResponse()
 )

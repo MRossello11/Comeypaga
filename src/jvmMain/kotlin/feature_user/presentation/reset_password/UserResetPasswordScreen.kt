@@ -15,6 +15,7 @@ import core.components.AppHeader
 import core.components.LabeledTextField
 import core.components.OneOptionDialog
 import core.components.PrimaryButton
+import kotlinx.coroutines.flow.collectLatest
 import java.awt.Dimension
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -24,23 +25,45 @@ fun UserResetPasswordScreen(
     onBack: () -> Unit,
     resetPasswordController: ResetPasswordController
 ) {
+    // controller form state
     val viewState: State<ResetPasswordState> = resetPasswordController.resetPasswordState.collectAsState()
-    var resetPasswordState by remember { mutableStateOf(ResetPasswordState()) }
+
+    // form state
+    var resetPasswordFormState by remember { mutableStateOf(ResetPasswordState()) }
+
+    // dialog states
+    var showDialog by remember { mutableStateOf(false) }
+    var errorDialogMessage by remember { mutableStateOf("") }
+
+    LaunchedEffect(key1 = true){
+        resetPasswordController.eventFlow.collectLatest { event ->
+            when(event){
+                is ResetPasswordController.UiEvent.ShowDialog -> {
+                    errorDialogMessage = event.message
+                    showDialog = true
+                }
+            }
+        }
+    }
 
     Dialog(
         title = "Aviso",
-        visible = !viewState.value.responseEventConsumed,
-        onCloseRequest = resetPasswordController::consumeResponseEvent,
+        visible = showDialog,
+        onCloseRequest = {
+            showDialog = false
+        },
     ) {
         this.window.size = Dimension(325, 150)
         OneOptionDialog(
-            text = viewState.value.resetPasswordResponse.message ?: "",
+            text = errorDialogMessage,
             onClickButton = {
-                resetPasswordController.consumeResponseEvent()
+                showDialog = false
 
                 // go back if response is ok
-                if (viewState.value.resetPasswordResponse.errorCode in 200..299){
-                    onBack()
+                viewState.value.resetPasswordResponse.errorCode?.let { errorCode ->
+                    if (errorCode in 200..299){
+                        onBack()
+                    }
                 }
             }
         )
@@ -63,9 +86,9 @@ fun UserResetPasswordScreen(
             Spacer(modifier = spacerModifier)
 
             LabeledTextField(
-                value = resetPasswordState.username,
+                value = resetPasswordFormState.username,
                 onValueChange = {
-                    resetPasswordState = resetPasswordState.copy(
+                    resetPasswordFormState = resetPasswordFormState.copy(
                         username = it
                     )
                     resetPasswordController.onEvent(ResetPasswordEvent.FieldEntered(it, ResetPasswordField.USERNAME))
@@ -76,9 +99,9 @@ fun UserResetPasswordScreen(
             Spacer(modifier = spacerModifier)
 
             LabeledTextField(
-                value = resetPasswordState.password,
+                value = resetPasswordFormState.password,
                 onValueChange = {
-                    resetPasswordState = resetPasswordState.copy(
+                    resetPasswordFormState = resetPasswordFormState.copy(
                         password = it
                     )
                     resetPasswordController.onEvent(ResetPasswordEvent.FieldEntered(it, ResetPasswordField.PASSWORD))
@@ -89,9 +112,9 @@ fun UserResetPasswordScreen(
             Spacer(modifier = spacerModifier)
 
             LabeledTextField(
-                value = resetPasswordState.passwordConfirmation,
+                value = resetPasswordFormState.passwordConfirmation,
                 onValueChange = {
-                    resetPasswordState = resetPasswordState.copy(
+                    resetPasswordFormState = resetPasswordFormState.copy(
                         passwordConfirmation = it
                     )
                     resetPasswordController.onEvent(
