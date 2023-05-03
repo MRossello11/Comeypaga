@@ -1,7 +1,5 @@
 package feature_user.presentation.reset_password
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -10,13 +8,14 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.window.Dialog
 import core.ComeypagaStyles.spacerModifier
 import core.components.AppHeader
 import core.components.LabeledTextField
+import core.components.OneOptionDialog
 import core.components.PrimaryButton
+import java.awt.Dimension
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -25,16 +24,26 @@ fun UserResetPasswordScreen(
     onBack: () -> Unit,
     resetPasswordController: ResetPasswordController
 ) {
-    var viewState: State<ResetPasswordState> = resetPasswordController.resetPasswordState.collectAsState()
+    val viewState: State<ResetPasswordState> = resetPasswordController.resetPasswordState.collectAsState()
     var resetPasswordState by remember { mutableStateOf(ResetPasswordState()) }
 
     Dialog(
+        title = "Aviso",
         visible = !viewState.value.responseEventConsumed,
         onCloseRequest = resetPasswordController::consumeResponseEvent,
     ) {
-        Box(modifier = Modifier.background(Color.White)){
-            Text(text = viewState.value.resetPasswordResponse.message ?: "")// todo
-        }
+        this.window.size = Dimension(325, 150)
+        OneOptionDialog(
+            text = viewState.value.resetPasswordResponse.message ?: "",
+            onClickButton = {
+                resetPasswordController.consumeResponseEvent()
+
+                // go back if response is ok
+                if (viewState.value.resetPasswordResponse.errorCode in 200..299){
+                    onBack()
+                }
+            }
+        )
     }
 
     Scaffold(
