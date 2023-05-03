@@ -15,7 +15,7 @@ import core.service.createRetrofit
 import feature_user.data.UserRepositoryImpl
 import feature_user.data.data_source.UserDataSource
 import feature_user.domain.use_cases.LoginUseCase
-import feature_user.domain.use_cases.RestPasswordUseCase
+import feature_user.domain.use_cases.ResetPasswordUseCase
 import feature_user.domain.use_cases.UserUseCases
 import feature_user.presentation.login.LoginController
 import feature_user.presentation.login.LoginScreen
@@ -33,7 +33,7 @@ fun MainContent(){
 
     val useCases = UserUseCases(
         loginUseCase = LoginUseCase(repoImpl),
-        resetPassword = RestPasswordUseCase(repoImpl)
+        resetPassword = ResetPasswordUseCase(repoImpl)
     )
 
     val loginController =

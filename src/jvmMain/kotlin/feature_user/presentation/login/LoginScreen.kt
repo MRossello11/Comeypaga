@@ -24,7 +24,7 @@ import core.service.createRetrofit
 import feature_user.data.UserRepositoryImpl
 import feature_user.data.data_source.UserDataSource
 import feature_user.domain.use_cases.LoginUseCase
-import feature_user.domain.use_cases.RestPasswordUseCase
+import feature_user.domain.use_cases.ResetPasswordUseCase
 import feature_user.domain.use_cases.UserUseCases
 
 @Composable
@@ -137,7 +137,7 @@ fun PreviewLoginScreen(){
         loginUseCase = LoginUseCase(
             repoImpl
         ),
-        resetPassword = RestPasswordUseCase(
+        resetPassword = ResetPasswordUseCase(
             repoImpl
         )
     )

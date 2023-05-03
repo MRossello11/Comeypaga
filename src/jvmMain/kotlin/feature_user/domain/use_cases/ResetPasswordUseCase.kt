@@ -5,7 +5,7 @@ import feature_user.domain.model.InvalidResetPasswordRequest
 import feature_user.domain.model.ResetPasswordRequest
 import feature_user.domain.repository.UserRepository
 
-class RestPasswordUseCase(
+class ResetPasswordUseCase(
     private val userRepository: UserRepository
 ) {
     suspend operator fun invoke(
