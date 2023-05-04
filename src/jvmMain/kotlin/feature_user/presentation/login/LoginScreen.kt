@@ -14,11 +14,13 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 import core.ComeypagaStyles.appColors
 import core.ComeypagaStyles.spacerModifier
 import core.Constants
 import core.components.AppHeader
 import core.components.LabeledTextField
+import core.components.OneOptionDialog
 import core.components.PrimaryButton
 import core.service.createRetrofit
 import feature_user.data.UserRepositoryImpl
@@ -26,6 +28,8 @@ import feature_user.data.data_source.UserDataSource
 import feature_user.domain.use_cases.LoginUseCase
 import feature_user.domain.use_cases.ResetPasswordUseCase
 import feature_user.domain.use_cases.UserUseCases
+import kotlinx.coroutines.flow.collectLatest
+import java.awt.Dimension
 
 @Composable
 fun LoginScreen(
@@ -41,6 +45,39 @@ fun LoginScreen(
 
     var password: String by remember {
         mutableStateOf("")
+    }
+
+    // dialog states
+    var showDialog by remember { mutableStateOf(false) }
+    var errorDialogMessage by remember { mutableStateOf("") }
+
+    LaunchedEffect(key1 = true){
+        loginController.eventFlow.collectLatest { event ->
+            when(event){
+                is LoginController.UiEvent.ShowDialog -> {
+                    errorDialogMessage = event.message
+                    showDialog = true
+                }
+
+                LoginController.UiEvent.Login -> TODO()
+            }
+        }
+    }
+
+    Dialog(
+        title = "Aviso",
+        visible = showDialog,
+        onCloseRequest = {
+            showDialog = false
+        },
+    ) {
+        this.window.size = Dimension(325, 150)
+        OneOptionDialog(
+            text = errorDialogMessage,
+            onClickButton = {
+                showDialog = false
+            }
+        )
     }
 
     Column(

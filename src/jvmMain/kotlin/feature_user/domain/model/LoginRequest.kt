@@ -9,3 +9,5 @@ data class LoginRequest(
     @SerializedName("password")
     val password: String
 )
+
+class InvalidLoginRequest(message: String): Exception(message)
