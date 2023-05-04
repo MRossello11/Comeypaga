@@ -35,6 +35,7 @@ import java.awt.Dimension
 fun LoginScreen(
     loginController: LoginController,
     onResetPasswordClick: () -> Unit,
+    onRegistry: () -> Unit,
 ) {
 
     val viewState: LoginState by loginController.loginState.collectAsState()
@@ -145,7 +146,7 @@ fun LoginScreen(
             PrimaryButton(
                 modifier = Modifier.fillMaxWidth(),
                 onClick = {
-                    onResetPasswordClick()
+                    onRegistry()
                 },
                 content = "Create account"
             )
@@ -184,7 +185,8 @@ fun PreviewLoginScreen(){
     MaterialTheme(appColors){
         LoginScreen(
             loginController = loginController,
-            onResetPasswordClick = {}
+            onResetPasswordClick = {},
+            onRegistry = {}
         )
     }
 }

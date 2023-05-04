@@ -8,4 +8,6 @@ sealed class Screen: Parcelable {
     object Login: Screen()
     @Parcelize
     object UserResetPassword: Screen()
+    @Parcelize
+    object Registry: Screen()
 }

@@ -19,6 +19,7 @@ import feature_user.domain.use_cases.ResetPasswordUseCase
 import feature_user.domain.use_cases.UserUseCases
 import feature_user.presentation.login.LoginController
 import feature_user.presentation.login.LoginScreen
+import feature_user.presentation.registry.RegistryScreen
 import feature_user.presentation.reset_password.ResetPasswordController
 import feature_user.presentation.reset_password.UserResetPasswordScreen
 
@@ -54,6 +55,9 @@ fun MainContent(){
                     loginController = loginController,
                     onResetPasswordClick = {
                         navigation.push(Screen.UserResetPassword)
+                    },
+                    onRegistry = {
+                        navigation.push(Screen.Registry)
                     }
                 )
             }
@@ -65,6 +69,11 @@ fun MainContent(){
                 )
             }
 
+            is Screen.Registry -> {
+                RegistryScreen(
+                    onBack = navigation::pop
+                )
+            }
         }
     }
 }
