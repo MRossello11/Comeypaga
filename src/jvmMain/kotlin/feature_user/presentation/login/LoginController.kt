@@ -39,20 +39,19 @@ class LoginController(
                     try {
                         userUseCases.loginUseCase(
                             loginRequest = LoginRequest(_loginState.value.username, _loginState.value.password),
-                            callback = { user, errorCode, errorMessage ->
+                            callback = { user, response ->
                                 _loginState.update { currentState ->
                                     currentState.copy(
-                                        wsReturnCode = errorCode,
                                         user = user,
-                                        errorMessage = errorMessage
+                                        loginResponse = response
                                     )
                                 }
                             }
                         )
-                        if (_loginState.value.wsReturnCode in 200..299){
+                        if (_loginState.value.loginResponse.errorCode in 200..299){
                             _eventFlow.emit(UiEvent.Login)
                         } else {
-                            _eventFlow.emit(UiEvent.ShowDialog(_loginState.value.errorMessage.ifEmpty { "Error" }))
+                            _eventFlow.emit(UiEvent.ShowDialog(_loginState.value.loginResponse.message?.ifEmpty { "Error" } ?: "Error"))
                         }
                     } catch (ilr: InvalidLoginRequest){
                         _eventFlow.emit(UiEvent.ShowDialog(ilr.message ?: "Error"))

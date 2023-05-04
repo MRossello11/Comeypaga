@@ -6,7 +6,7 @@ import feature_user.domain.model.ResetPasswordRequest
 import feature_user.domain.model.User
 
 interface UserRepository {
-    suspend fun login(loginRequest: LoginRequest, callback: (User?, errorCode: Int, errorMessage: String) -> Unit)
+    suspend fun login(loginRequest: LoginRequest, callback: (User?, response: BaseResponse) -> Unit)
     fun registry()
     suspend fun resetPassword(resetPasswordRequest: ResetPasswordRequest, callback: (response: BaseResponse) -> Unit)
 }

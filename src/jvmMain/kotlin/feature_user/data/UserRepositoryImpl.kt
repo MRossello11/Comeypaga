@@ -13,7 +13,7 @@ import java.text.SimpleDateFormat
 class UserRepositoryImpl(
     private val userDataSource: UserDataSource
 ): UserRepository {
-    override suspend fun login(loginRequest: LoginRequest, callback: (User?, errorCode: Int, errorMessage: String) -> Unit) {
+    override suspend fun login(loginRequest: LoginRequest, callback: (User?, response: BaseResponse) -> Unit) {
         try{
             val response = userDataSource.login(loginRequest)
 
@@ -32,19 +32,19 @@ class UserRepositoryImpl(
                         password = it.password
                     )
 
-                    callback(user, response.code(), response.message())
+                    callback(user, BaseResponse(response.code(), response.message()))
                     return
                 }
             } else {
                 val errorBody = response.errorBody()?.string()
                 val errorResponse = Gson().fromJson(errorBody, ErrorResponse::class.java)
-                callback(null, response.code(), errorResponse.message ?: "An error occurred")
+                callback(null, BaseResponse(response.code(), errorResponse.message ?: "An error occurred"))
                 return
             }
 
-            callback(null, response.code(), "An error occurred")
+            callback(null, BaseResponse(response.code(), "An error occurred"))
         } catch (e: Exception){
-            callback(null, 400, "An error occurred")
+            callback(null, BaseResponse(400, "An error occurred"))
         }
     }
 

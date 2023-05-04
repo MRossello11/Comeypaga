@@ -1,5 +1,6 @@
 package feature_user.domain.use_cases
 
+import core.model.BaseResponse
 import feature_user.domain.model.InvalidLoginRequest
 import feature_user.domain.model.LoginRequest
 import feature_user.domain.model.User
@@ -8,7 +9,7 @@ import feature_user.domain.repository.UserRepository
 class LoginUseCase(
     private val userRepository: UserRepository
 ) {
-    suspend operator fun invoke(loginRequest: LoginRequest, callback: (User?, errorCode: Int, errorMessage: String) -> Unit){
+    suspend operator fun invoke(loginRequest: LoginRequest, callback: (User?, response: BaseResponse) -> Unit){
         if (loginRequest.username.isEmpty()){
             throw InvalidLoginRequest("Username cannot be empty")
         }
