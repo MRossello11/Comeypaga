@@ -1,11 +1,9 @@
 package feature_user.presentation.login
 
-import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Arrangement.Bottom
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -17,17 +15,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import core.ComeypagaStyles.appColors
 import core.ComeypagaStyles.spacerModifier
-import core.Constants
 import core.components.AppHeader
 import core.components.LabeledTextField
 import core.components.OneOptionDialog
 import core.components.PrimaryButton
-import core.service.createRetrofit
-import feature_user.data.UserRepositoryImpl
-import feature_user.data.data_source.UserDataSource
-import feature_user.domain.use_cases.LoginUseCase
-import feature_user.domain.use_cases.ResetPasswordUseCase
-import feature_user.domain.use_cases.UserUseCases
 import kotlinx.coroutines.flow.collectLatest
 import java.awt.Dimension
 
@@ -52,9 +43,9 @@ fun LoginScreen(
     var showDialog by remember { mutableStateOf(false) }
     var errorDialogMessage by remember { mutableStateOf("") }
 
-    LaunchedEffect(key1 = true){
+    LaunchedEffect(key1 = true) {
         loginController.eventFlow.collectLatest { event ->
-            when(event){
+            when (event) {
                 is LoginController.UiEvent.ShowDialog -> {
                     errorDialogMessage = event.message
                     showDialog = true
@@ -160,33 +151,5 @@ fun LoginScreen(
             )
             Spacer(modifier = spacerModifier)
         }
-    }
-}
-
-@Composable
-@Preview
-fun PreviewLoginScreen(){
-    val repoImpl = UserRepositoryImpl(
-        createRetrofit(Constants.WebService.BASE_URL).create(
-            UserDataSource::class.java)
-    )
-
-    val useCases = UserUseCases(
-        loginUseCase = LoginUseCase(
-            repoImpl
-        ),
-        resetPassword = ResetPasswordUseCase(
-            repoImpl
-        )
-    )
-    val loginController =
-        LoginController(useCases)
-
-    MaterialTheme(appColors){
-        LoginScreen(
-            loginController = loginController,
-            onResetPasswordClick = {},
-            onRegistry = {}
-        )
     }
 }
