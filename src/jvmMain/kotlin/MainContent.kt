@@ -12,18 +12,18 @@ import core.Constants
 import core.navigation.ChildStack
 import core.navigation.Screen
 import core.service.createRetrofit
-import feature_user.data.UserRepositoryImpl
-import feature_user.data.data_source.UserDataSource
-import feature_user.domain.use_cases.LoginUseCase
-import feature_user.domain.use_cases.RegistryUseCase
-import feature_user.domain.use_cases.ResetPasswordUseCase
-import feature_user.domain.use_cases.UserUseCases
-import feature_user.presentation.login.LoginController
-import feature_user.presentation.login.LoginScreen
-import feature_user.presentation.registry.RegistryController
-import feature_user.presentation.registry.RegistryScreen
-import feature_user.presentation.reset_password.ResetPasswordController
-import feature_user.presentation.reset_password.UserResetPasswordScreen
+import feature_users.data.UserRepositoryImpl
+import feature_users.data.data_source.UserDataSource
+import feature_users.domain.use_cases.LoginUseCase
+import feature_users.domain.use_cases.RegistryUseCase
+import feature_users.domain.use_cases.ResetPasswordUseCase
+import feature_users.domain.use_cases.UserUseCases
+import feature_users.presentation.login.LoginController
+import feature_users.presentation.login.LoginScreen
+import feature_users.presentation.registry.RegistryController
+import feature_users.presentation.registry.RegistryScreen
+import feature_users.presentation.reset_password.ResetPasswordController
+import feature_users.presentation.reset_password.UserResetPasswordScreen
 
 @OptIn(ExperimentalDecomposeApi::class)
 @Composable

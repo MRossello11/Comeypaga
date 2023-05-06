@@ -2,7 +2,7 @@ package core.navigation
 
 import com.arkivanov.essenty.parcelable.Parcelable
 import com.arkivanov.essenty.parcelable.Parcelize
-import feature_user.domain.model.User
+import feature_users.domain.model.User
 
 sealed class Screen: Parcelable {
     @Parcelize
