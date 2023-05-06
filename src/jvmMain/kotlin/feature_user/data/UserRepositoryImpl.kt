@@ -5,10 +5,7 @@ import core.Constants.DB_DATE
 import core.model.BaseResponse
 import core.model.ErrorResponse
 import feature_user.data.data_source.UserDataSource
-import feature_user.domain.model.LoginRequest
-import feature_user.domain.model.ResetPasswordRequest
-import feature_user.domain.model.User
-import feature_user.domain.model.UserResponse
+import feature_user.domain.model.*
 import feature_user.domain.repository.UserRepository
 import java.text.SimpleDateFormat
 
@@ -31,7 +28,18 @@ class UserRepositoryImpl(
                         phone = it.phone,
                         email = it.email,
                         address = it.address,
-                        password = it.password
+                        password = it.password,
+                        role = when(Role.valueOf(it.role.uppercase())){
+                            Role.USER -> {
+                                Role.USER
+                            }
+                            Role.RIDER ->{
+                                Role.RIDER
+                            }
+                            Role.ADMIN ->{
+                                Role.ADMIN
+                            }
+                        }
                     )
 
                     callback(user, BaseResponse(response.code(), response.message()))
@@ -46,6 +54,7 @@ class UserRepositoryImpl(
 
             callback(null, BaseResponse(response.code(), "An error occurred"))
         } catch (e: Exception){
+            e.printStackTrace()
             callback(null, BaseResponse(400, "An error occurred"))
         }
     }

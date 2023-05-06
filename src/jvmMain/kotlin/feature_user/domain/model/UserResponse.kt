@@ -27,7 +27,10 @@ data class UserResponse(
     val address: Address,
 
     @SerializedName("password")
-    val password: String
+    val password: String,
+
+    @SerializedName("role")
+    val role: String = Role.USER.toString()
 
 )
 

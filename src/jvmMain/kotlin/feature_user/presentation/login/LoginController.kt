@@ -49,7 +49,11 @@ class LoginController(
                             }
                         )
                         if (_loginState.value.loginResponse.errorCode in 200..299){
-                            _eventFlow.emit(UiEvent.Login)
+                            _loginState.value.user?.let {
+                                _eventFlow.emit(UiEvent.Login)
+                            } ?: run {
+                                throw InvalidLoginRequest("Error logging in")
+                            }
                         } else {
                             _eventFlow.emit(UiEvent.ShowDialog(_loginState.value.loginResponse.message?.ifEmpty { "Error" } ?: "Error"))
                         }

@@ -63,6 +63,15 @@ fun MainContent(){
                     },
                     onRegistry = {
                         navigation.push(Screen.Registry)
+                    },
+                    onUserLogin = {
+                        navigation.push(Screen.UserMain(it))
+                    },
+                    onRiderLogin ={
+                        navigation.push(Screen.RiderMain(it))
+                    },
+                    onAdminLogin = {
+                        navigation.push(Screen.AdminMain(it))
                     }
                 )
             }
@@ -79,6 +88,17 @@ fun MainContent(){
                     registryController = registryController,
                     onBack = navigation::pop
                 )
+            }
+
+            // todo: Users pages
+            is Screen.UserMain -> {
+                println("User page")
+            }
+            is Screen.RiderMain -> {
+                println("Rider page")
+            }
+            is Screen.AdminMain ->{
+                println("Admin page")
             }
         }
     }

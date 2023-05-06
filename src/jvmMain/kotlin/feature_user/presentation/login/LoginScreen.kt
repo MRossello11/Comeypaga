@@ -19,6 +19,8 @@ import core.components.AppHeader
 import core.components.LabeledTextField
 import core.components.OneOptionDialog
 import core.components.PrimaryButton
+import feature_user.domain.model.Role
+import feature_user.domain.model.User
 import kotlinx.coroutines.flow.collectLatest
 import java.awt.Dimension
 
@@ -27,6 +29,9 @@ fun LoginScreen(
     loginController: LoginController,
     onResetPasswordClick: () -> Unit,
     onRegistry: () -> Unit,
+    onUserLogin: (user: User) -> Unit,
+    onRiderLogin: (user: User) -> Unit,
+    onAdminLogin: (user: User) -> Unit,
 ) {
 
     val viewState: LoginState by loginController.loginState.collectAsState()
@@ -51,7 +56,24 @@ fun LoginScreen(
                     showDialog = true
                 }
 
-                LoginController.UiEvent.Login -> TODO()
+                LoginController.UiEvent.Login -> {
+                    // navigate to corresponding screen
+                    viewState.user?.let { user ->
+                        when(user.role){
+                            Role.USER -> {
+                                onUserLogin(user)
+                            }
+
+                            Role.RIDER -> {
+                                onRiderLogin(user)
+                            }
+
+                            Role.ADMIN-> {
+                                onAdminLogin(user)
+                            }
+                        }
+                    }
+                }
             }
         }
     }
