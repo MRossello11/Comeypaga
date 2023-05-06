@@ -1,0 +1,58 @@
+package core.components
+
+import androidx.compose.desktop.ui.tooling.preview.Preview
+import androidx.compose.foundation.layout.Column
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.unit.sp
+import core.ComeypagaStyles
+
+@Composable
+fun LabeledTextField(
+    value: String,
+    onValueChange: (String) -> Unit,
+    label: String,
+    readOnly: Boolean = false,
+    visualTransformation: VisualTransformation = VisualTransformation.None
+){
+    Column {
+        TextField(
+            value = value,
+            onValueChange = onValueChange,
+            colors = TextFieldDefaults.textFieldColors(
+                containerColor = Color.Transparent
+            ),
+            textStyle = TextStyle(
+                fontSize = 15.sp
+            ),
+            label = {
+                Text(
+                    text = label,
+                    fontSize = 10.sp
+                )
+            },
+            readOnly = readOnly,
+            visualTransformation = visualTransformation
+        )
+    }
+}
+
+@Composable
+@Preview
+fun LabeledTextFieldPreview(){
+    MaterialTheme(
+        colors = ComeypagaStyles.appColors
+    ) {
+        LabeledTextField(
+            value = "Migue",
+            onValueChange = {},
+            label = "Username"
+        )
+    }
+}
