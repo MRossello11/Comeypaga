@@ -30,3 +30,5 @@ data class UserResponse(
     val password: String
 
 )
+
+class InvalidUser(message: String): Exception(message)

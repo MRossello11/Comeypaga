@@ -15,10 +15,12 @@ import core.service.createRetrofit
 import feature_user.data.UserRepositoryImpl
 import feature_user.data.data_source.UserDataSource
 import feature_user.domain.use_cases.LoginUseCase
+import feature_user.domain.use_cases.RegistryUseCase
 import feature_user.domain.use_cases.ResetPasswordUseCase
 import feature_user.domain.use_cases.UserUseCases
 import feature_user.presentation.login.LoginController
 import feature_user.presentation.login.LoginScreen
+import feature_user.presentation.registry.RegistryController
 import feature_user.presentation.registry.RegistryScreen
 import feature_user.presentation.reset_password.ResetPasswordController
 import feature_user.presentation.reset_password.UserResetPasswordScreen
@@ -34,13 +36,16 @@ fun MainContent(){
 
     val useCases = UserUseCases(
         loginUseCase = LoginUseCase(repoImpl),
-        resetPassword = ResetPasswordUseCase(repoImpl)
+        resetPassword = ResetPasswordUseCase(repoImpl),
+        registryUseCase = RegistryUseCase(repoImpl)
     )
 
     val loginController =
         LoginController(useCases)
 
     val resetPasswordController = ResetPasswordController(useCases)
+
+    val registryController = RegistryController(useCases)
 
     // navigation
     val navigation = remember { StackNavigation<Screen>() }
@@ -71,6 +76,7 @@ fun MainContent(){
 
             is Screen.Registry -> {
                 RegistryScreen(
+                    registryController = registryController,
                     onBack = navigation::pop
                 )
             }

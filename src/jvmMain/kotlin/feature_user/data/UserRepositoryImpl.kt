@@ -1,12 +1,14 @@
 package feature_user.data
 
 import com.google.gson.Gson
+import core.Constants.DB_DATE
 import core.model.BaseResponse
 import core.model.ErrorResponse
 import feature_user.data.data_source.UserDataSource
 import feature_user.domain.model.LoginRequest
 import feature_user.domain.model.ResetPasswordRequest
 import feature_user.domain.model.User
+import feature_user.domain.model.UserResponse
 import feature_user.domain.repository.UserRepository
 import java.text.SimpleDateFormat
 
@@ -19,7 +21,7 @@ class UserRepositoryImpl(
 
             if (response.code() in 200..299) {
                 response.body()?.let {
-                    val dateFormatter = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+                    val dateFormatter = SimpleDateFormat(DB_DATE)
 
                     val user = User(
                         username = it.username,
@@ -48,16 +50,30 @@ class UserRepositoryImpl(
         }
     }
 
-    override fun registry() {
-        TODO("Not yet implemented")
-    }
-
     override suspend fun resetPassword(resetPasswordRequest: ResetPasswordRequest, callback: (response: BaseResponse) -> Unit) {
         val response = userDataSource.resetPassword(resetPasswordRequest)
 
         if (response.code() in 200..299) {
             response.body()?.let { body ->
                 callback(BaseResponse(response.code(), body.message))
+                return
+            }
+        } else {
+            val errorBody = response.errorBody()?.string()
+            val errorResponse = Gson().fromJson(errorBody, ErrorResponse::class.java)
+            callback(BaseResponse(response.code(), errorResponse.message ?: "An error occurred"))
+            return
+        }
+
+        callback(BaseResponse(response.code(), "An error occurred"))
+    }
+
+    override suspend fun registry(userRegistryRequest: UserResponse, callback: (response: BaseResponse) -> Unit) {
+        val response = userDataSource.registry(userRegistryRequest)
+
+        if (response.code() in 200..299){
+            response.body()?.let { body ->
+                callback(BaseResponse(response.code(),body.message))
                 return
             }
         } else {
