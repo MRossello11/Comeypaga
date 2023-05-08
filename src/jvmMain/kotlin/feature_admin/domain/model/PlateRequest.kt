@@ -3,7 +3,7 @@ package feature_admin.domain.model
 import com.google.gson.annotations.SerializedName
 
 data class PlateRequest(
-    @SerializedName("plateId")
+    @SerializedName("restaurantId")
     val restaurantId: String,
     @SerializedName("plateId")
     val plateId: String,
@@ -16,3 +16,5 @@ data class PlateRequest(
     @SerializedName("type")
     val type: String
 )
+
+class InvalidPlateRequest(message: String): Exception(message)

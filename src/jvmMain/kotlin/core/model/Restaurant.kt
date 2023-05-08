@@ -24,3 +24,5 @@ data class Restaurant(
     @SerializedName("menu")
     val menu: ArrayList<Plate>
 )
+
+class InvalidRestaurant(message: String): Exception(message)
