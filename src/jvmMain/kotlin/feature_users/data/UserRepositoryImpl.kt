@@ -2,6 +2,7 @@ package feature_users.data
 
 import com.google.gson.Gson
 import core.Constants.DB_DATE
+import core.handleBaseResponse
 import core.model.BaseResponse
 import core.model.ErrorResponse
 import feature_users.data.data_source.UserDataSource
@@ -62,36 +63,13 @@ class UserRepositoryImpl(
     override suspend fun resetPassword(resetPasswordRequest: ResetPasswordRequest, callback: (response: BaseResponse) -> Unit) {
         val response = userDataSource.resetPassword(resetPasswordRequest)
 
-        if (response.code() in 200..299) {
-            response.body()?.let { body ->
-                callback(BaseResponse(response.code(), body.message))
-                return
-            }
-        } else {
-            val errorBody = response.errorBody()?.string()
-            val errorResponse = Gson().fromJson(errorBody, ErrorResponse::class.java)
-            callback(BaseResponse(response.code(), errorResponse.message ?: "An error occurred"))
-            return
-        }
-
-        callback(BaseResponse(response.code(), "An error occurred"))
+        handleBaseResponse(response, callback)
     }
 
     override suspend fun registry(userRegistryRequest: UserResponse, callback: (response: BaseResponse) -> Unit) {
         val response = userDataSource.registry(userRegistryRequest)
 
-        if (response.code() in 200..299){
-            response.body()?.let { body ->
-                callback(BaseResponse(response.code(),body.message))
-                return
-            }
-        } else {
-            val errorBody = response.errorBody()?.string()
-            val errorResponse = Gson().fromJson(errorBody, ErrorResponse::class.java)
-            callback(BaseResponse(response.code(), errorResponse.message ?: "An error occurred"))
-            return
-        }
 
-        callback(BaseResponse(response.code(), "An error occurred"))
+        handleBaseResponse(response, callback)
     }
 }
