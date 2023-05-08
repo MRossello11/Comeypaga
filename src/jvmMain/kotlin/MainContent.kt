@@ -12,6 +12,11 @@ import core.Constants
 import core.navigation.ChildStack
 import core.navigation.Screen
 import core.service.createRetrofit
+import feature_admin.data.AdminRepositoryImpl
+import feature_admin.data.data_source.AdminDataSource
+import feature_admin.domain.use_cases.*
+import feature_admin.presentation.restaurants.AdminRestaurantScreen
+import feature_admin.presentation.restaurants.AdminRestaurantsController
 import feature_users.data.UserRepositoryImpl
 import feature_users.data.data_source.UserDataSource
 import feature_users.domain.use_cases.LoginUseCase
@@ -98,7 +103,25 @@ fun MainContent(){
                 println("Rider page")
             }
             is Screen.AdminMain ->{
-                println("Admin page")
+                // todo: until rider screen is finished
+                val adminRepository = AdminRepositoryImpl(
+                    createRetrofit(Constants.WebService.BASE_URL).create(
+                        AdminDataSource::class.java)
+                )
+                val adminUseCases = AdminUseCases(
+                    getRestaurants = GetRestaurants(adminRepository),
+                    addRestaurant = AddRestaurant(adminRepository),
+                    modifyRestaurant = ModifyRestaurant(adminRepository),
+                    deleteRestaurant = DeleteRestaurant(adminRepository),
+                    addPlate = AddPlate(adminRepository),
+                    modifyPlate = ModifyPlate(adminRepository),
+                    deletePlate = DeletePlate(adminRepository),
+                )
+                val adminRestaurantsController = AdminRestaurantsController(adminUseCases)
+                AdminRestaurantScreen(
+                    controller = adminRestaurantsController,
+                    onBack = navigation::pop
+                )
             }
         }
     }

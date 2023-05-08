@@ -17,7 +17,7 @@ class AdminRepositoryImpl(
 
         if (response.code() in 200..299){
             response.body()?.let {
-                callback(BaseResponse(response.code(), response.message()), it)
+                callback(BaseResponse(response.code(), response.message()), it.restaurants as ArrayList<Restaurant>)
             } ?: run{
                 callback(BaseResponse(response.code(), "An error occurred"), arrayListOf())
             }

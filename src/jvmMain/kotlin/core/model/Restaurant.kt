@@ -22,7 +22,11 @@ data class Restaurant(
     @SerializedName("picture")
     val picture: String,
     @SerializedName("menu")
-    val menu: ArrayList<Plate>
+    val menu: List<Plate>
 )
 
+data class RestaurantWrapper(
+    @SerializedName("restaurants")
+    val restaurants: List<Restaurant>
+)
 class InvalidRestaurant(message: String): Exception(message)
