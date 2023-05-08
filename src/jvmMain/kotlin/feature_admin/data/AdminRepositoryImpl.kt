@@ -1,11 +1,11 @@
-package feature_admin
+package feature_admin.data
 
 import com.google.gson.Gson
 import core.handleBaseResponse
 import core.model.BaseResponse
 import core.model.ErrorResponse
 import core.model.Restaurant
-import feature_admin.data.AdminDataSource
+import feature_admin.data.data_source.AdminDataSource
 import feature_admin.domain.model.PlateRequest
 import feature_admin.domain.repository.AdminRepository
 
