@@ -16,7 +16,6 @@ class AdminRestaurantsController(
     val eventFlow = _eventFlow.asSharedFlow()
 
     init {
-        println("Init")
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 println("Calling get rest")

@@ -6,6 +6,7 @@ import androidx.compose.material.Colors
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import java.awt.Dimension
 
 object ComeypagaStyles {
         val appColors = Colors(
@@ -27,4 +28,6 @@ object ComeypagaStyles {
         val primaryColorGreen = Color(0xff33cc33)
 
         val spacerModifier: Modifier = Modifier.fillMaxWidth().height(20.dp)
+
+        val standardDialogDimension = Dimension(325, 150)
 }

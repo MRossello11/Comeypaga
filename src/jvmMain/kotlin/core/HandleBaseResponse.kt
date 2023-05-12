@@ -19,7 +19,9 @@ fun handleBaseResponse(
             } ?: run {
                 callback(BaseResponse(response.code(), "An error occurred"))
             }
-        } else {
+        } else if(response.code() == 401 || response.code() == 403){
+            callback(BaseResponse(response.code(), "You are not authorized"))
+        }else {
             val errorBody = response.errorBody()?.string()
             val errorResponse = Gson().fromJson(errorBody, ErrorResponse::class.java)
             callback(BaseResponse(response.code(), errorResponse.message ?: "An error occurred"))

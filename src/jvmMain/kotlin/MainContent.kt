@@ -15,6 +15,8 @@ import core.service.createRetrofit
 import feature_admin.data.AdminRepositoryImpl
 import feature_admin.data.data_source.AdminDataSource
 import feature_admin.domain.use_cases.*
+import feature_admin.presentation.add_modify_restaurant.AddModifyRestaurantScreen
+import feature_admin.presentation.add_modify_restaurant.AddRestaurantController
 import feature_admin.presentation.restaurants.AdminRestaurantScreen
 import feature_admin.presentation.restaurants.AdminRestaurantsController
 import feature_users.data.UserRepositoryImpl
@@ -34,8 +36,11 @@ import feature_users.presentation.reset_password.UserResetPasswordScreen
 @Composable
 fun MainContent(){
 // todo: use dependency injection
+    val retrofit =
+        createRetrofit(Constants.WebService.BASE_URL)
+
     val repoImpl = UserRepositoryImpl(
-        createRetrofit(Constants.WebService.BASE_URL).create(
+        retrofit.create(
             UserDataSource::class.java)
     )
 
@@ -51,6 +56,23 @@ fun MainContent(){
     val resetPasswordController = ResetPasswordController(useCases)
 
     val registryController = RegistryController(useCases)
+
+    // admin
+    // todo: until rider screen is finished
+    val adminRepository = AdminRepositoryImpl(
+        retrofit.create(
+            AdminDataSource::class.java)
+    )
+
+    val adminUseCases = AdminUseCases(
+        getRestaurants = GetRestaurants(adminRepository),
+        addRestaurant = AddRestaurant(adminRepository),
+        modifyRestaurant = ModifyRestaurant(adminRepository),
+        deleteRestaurant = DeleteRestaurant(adminRepository),
+        addPlate = AddPlate(adminRepository),
+        modifyPlate = ModifyPlate(adminRepository),
+        deletePlate = DeletePlate(adminRepository),
+    )
 
     // navigation
     val navigation = remember { StackNavigation<Screen>() }
@@ -103,24 +125,20 @@ fun MainContent(){
                 println("Rider page")
             }
             is Screen.AdminMain ->{
-                // todo: until rider screen is finished
-                val adminRepository = AdminRepositoryImpl(
-                    createRetrofit(Constants.WebService.BASE_URL).create(
-                        AdminDataSource::class.java)
-                )
-                val adminUseCases = AdminUseCases(
-                    getRestaurants = GetRestaurants(adminRepository),
-                    addRestaurant = AddRestaurant(adminRepository),
-                    modifyRestaurant = ModifyRestaurant(adminRepository),
-                    deleteRestaurant = DeleteRestaurant(adminRepository),
-                    addPlate = AddPlate(adminRepository),
-                    modifyPlate = ModifyPlate(adminRepository),
-                    deletePlate = DeletePlate(adminRepository),
-                )
+
                 val adminRestaurantsController = AdminRestaurantsController(adminUseCases)
                 AdminRestaurantScreen(
                     controller = adminRestaurantsController,
-                    onBack = navigation::pop
+                    onBack = navigation::pop,
+                    onAddRestaurant = {
+                        navigation.push(Screen.AddModifyRestaurant(null))
+                    }
+                )
+            }
+            is Screen.AddModifyRestaurant -> {
+                AddModifyRestaurantScreen(
+                    controller = AddRestaurantController(adminUseCases),
+                    onBack = navigation::pop,
                 )
             }
         }

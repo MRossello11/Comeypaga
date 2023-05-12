@@ -33,12 +33,13 @@ class AddRestaurant(
         if (restaurant.address.town.isEmpty()){
             throw InvalidRestaurant("Town cannot be empty")
         }
-        if (restaurant.picture.isEmpty()){
+        // todo
+        /*if (restaurant.picture.isEmpty()){
             throw InvalidRestaurant("You need to add a picture")
-        }
-        if (restaurant.menu.isEmpty()){
+        }*/
+        /*if (restaurant.menu.isEmpty()){
             throw InvalidRestaurant("Menu cannot be empty")
-        }
+        }*/
 
         // verify email
         val emailPattern = Regex("[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}")
@@ -51,6 +52,11 @@ class AddRestaurant(
         if (!phonePattern.matches(restaurant.phone)) {
             throw InvalidRestaurant("Invalid phone number")
         }
+
+        // verify stars
+        val stars = restaurant.reviewStars.toFloatOrNull() ?: throw InvalidRestaurant("Invalid review stars")
+
+        if (stars !in 0f..5f) throw InvalidRestaurant("Invalid review stars")
 
         adminRepository.putRestaurant(restaurant, callback)
     }

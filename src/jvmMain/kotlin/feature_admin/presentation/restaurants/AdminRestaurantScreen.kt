@@ -28,7 +28,8 @@ import java.awt.Dimension
 @Composable
 fun AdminRestaurantScreen(
     controller: AdminRestaurantsController,
-    onBack: () -> Unit
+    onBack: () -> Unit,
+    onAddRestaurant: () -> Unit
 ){
     val viewState: AdminRestaurantsState by controller.state.collectAsState()
 
@@ -68,7 +69,7 @@ fun AdminRestaurantScreen(
         floatingActionButton = {
             FloatingActionButton(
                 modifier = Modifier,
-                onClick = {},
+                onClick = onAddRestaurant,
                 shape = CircleShape,
                 containerColor = ComeypagaStyles.primaryColorGreen,
                 contentColor = Color.White
