@@ -14,8 +14,8 @@ import androidx.compose.ui.window.Dialog
 import core.ComeypagaStyles
 import core.components.AppHeader
 import core.components.LabeledTextField
-import core.components.OneOptionDialog
 import core.components.PrimaryButton
+import core.components.dialogs.OneOptionDialog
 import feature_users.presentation.registry.Field.*
 import kotlinx.coroutines.flow.collectLatest
 import java.awt.Dimension

@@ -20,4 +20,6 @@ sealed class Screen: Parcelable {
     data class AdminMain(val admin: User): Screen()
     @Parcelize
     data class AddModifyRestaurant(val restaurant: Restaurant?): Screen()
+    @Parcelize
+    data class MenuScreen(val restaurant: Restaurant): Screen()
 }

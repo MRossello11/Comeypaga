@@ -12,14 +12,17 @@ import core.ComeypagaStyles.spacerModifier
 import core.ComeypagaStyles.standardDialogDimension
 import core.components.AppHeader
 import core.components.LabeledTextField
-import core.components.OneOptionDialog
 import core.components.PrimaryButton
+import core.components.dialogs.OneOptionDialog
+import core.model.Address
+import core.model.Restaurant
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun AddModifyRestaurantScreen(
     controller: AddRestaurantController,
     onBack: () -> Unit,
+    onClickEditMenu: (Restaurant) -> Unit
 ) {
     val viewState = controller.state.collectAsState()
     var state by remember { mutableStateOf(AddModifyRestaurantState()) }
@@ -211,7 +214,25 @@ fun AddModifyRestaurantScreen(
                     .height(40.dp)
                     .padding(horizontal = 10.dp),
                 content = "Edit menu",
-                onClick = {}
+                onClick = {
+                    onClickEditMenu(
+                        Restaurant(
+                            id = null,
+                            name = state.name,
+                            foodType = state.foodType,
+                            typology = state.typology,
+                            reviewStars = state.reviewStars,
+                            phone = state.phone,
+                            email = state.email,
+                            address = Address(
+                                street = state.street,
+                                town = state.town
+                            ),
+                            picture = "", // todo
+                            menu = listOf(),
+                        )
+                    )
+                }
             )
 
             Spacer(modifier = spacerModifier)

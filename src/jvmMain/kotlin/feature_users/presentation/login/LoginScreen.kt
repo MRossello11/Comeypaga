@@ -17,8 +17,8 @@ import core.ComeypagaStyles.appColors
 import core.ComeypagaStyles.spacerModifier
 import core.components.AppHeader
 import core.components.LabeledTextField
-import core.components.OneOptionDialog
 import core.components.PrimaryButton
+import core.components.dialogs.OneOptionDialog
 import feature_users.domain.model.Role
 import feature_users.domain.model.User
 import kotlinx.coroutines.flow.collectLatest

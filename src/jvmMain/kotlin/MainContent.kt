@@ -17,6 +17,8 @@ import feature_admin.data.data_source.AdminDataSource
 import feature_admin.domain.use_cases.*
 import feature_admin.presentation.add_modify_restaurant.AddModifyRestaurantScreen
 import feature_admin.presentation.add_modify_restaurant.AddRestaurantController
+import feature_admin.presentation.menu.MenuController
+import feature_admin.presentation.menu.MenuScreen
 import feature_admin.presentation.restaurants.AdminRestaurantScreen
 import feature_admin.presentation.restaurants.AdminRestaurantsController
 import feature_users.data.UserRepositoryImpl
@@ -132,13 +134,28 @@ fun MainContent(){
                     onBack = navigation::pop,
                     onAddRestaurant = {
                         navigation.push(Screen.AddModifyRestaurant(null))
-                    }
+                    },
                 )
             }
             is Screen.AddModifyRestaurant -> {
                 AddModifyRestaurantScreen(
                     controller = AddRestaurantController(adminUseCases),
                     onBack = navigation::pop,
+                    onClickEditMenu = {
+                        navigation.push(Screen.MenuScreen(it))
+                    }
+                )
+            }
+            is Screen.MenuScreen -> {
+                val controller = MenuController(
+                    adminUseCases = adminUseCases
+                )
+                MenuScreen(
+                    restaurant = screen.restaurant,
+                    controller = controller,
+                    onBack = navigation::pop,
+                    onClickAddPlate = { /* TODO: navigate to add plate screen */},
+                    onClickPlate = { /* TODO: navigate to modify plate screen */ }
                 )
             }
         }

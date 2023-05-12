@@ -1,9 +1,8 @@
-package feature_admin.presentation.restaurants
+package feature_admin.presentation.menu
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -20,29 +19,41 @@ import core.ComeypagaStyles
 import core.ComeypagaStyles.spacerModifier
 import core.components.AppHeader
 import core.components.dialogs.OneOptionDialog
-import core.components.restaurants.RestaurantCard
+import core.components.dialogs.TwoOptionDialog
+import core.components.restaurants.PlateListItem
+import core.model.Plate
+import core.model.Restaurant
 import kotlinx.coroutines.flow.collectLatest
 import java.awt.Dimension
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AdminRestaurantScreen(
-    controller: AdminRestaurantsController,
+fun MenuScreen(
+    restaurant: Restaurant,
+    controller: MenuController,
     onBack: () -> Unit,
-    onAddRestaurant: () -> Unit,
+    onClickPlate: (Plate) -> Unit,
+    onClickAddPlate: (String) -> Unit
 ){
-    val viewState: AdminRestaurantsState by controller.state.collectAsState()
+
+    val actualPlate by remember{ mutableStateOf(Plate("","","","","")) }
+    val viewState: MenuState by controller.state.collectAsState()
 
     // dialog states
     var showDialog by remember { mutableStateOf(false) }
+    var showTwoOptionsDialog by remember { mutableStateOf(false) }
     var errorDialogMessage by remember { mutableStateOf("") }
+
 
     LaunchedEffect(key1 = true){
         controller.eventFlow.collectLatest { event ->
             when(event){
-                is AdminRestaurantsController.UiEvent.ShowDialog -> {
-                    errorDialogMessage = event.message
-                    showDialog = true
+                is MenuController.UiEvent.ShowDeletePlateDialogConfirmation -> {
+                    showTwoOptionsDialog = true
+                    errorDialogMessage = "Confirm delete?"
+                }
+                is MenuController.UiEvent.ShowDialog -> {
+
                 }
             }
         }
@@ -64,43 +75,67 @@ fun AdminRestaurantScreen(
         )
     }
 
+    Dialog(
+        title = "Aviso",
+        visible = showTwoOptionsDialog,
+        onCloseRequest = {
+            showTwoOptionsDialog = false
+        },
+    ) {
+        this.window.size = Dimension(325, 150)
+        TwoOptionDialog(
+            text = errorDialogMessage,
+            onClickPositive = {
+                controller.onEvent(MenuEvent.ConfirmDelete)
+                showTwoOptionsDialog = false
+            },
+            onClickNegative = {
+                showTwoOptionsDialog = false
+            }
+        )
+    }
+
     Scaffold (
         modifier = Modifier.fillMaxSize(),
         floatingActionButton = {
             FloatingActionButton(
                 modifier = Modifier,
-                onClick = onAddRestaurant,
+                onClick = { restaurant.id?.let { onClickAddPlate(it) } },
                 shape = CircleShape,
                 containerColor = ComeypagaStyles.primaryColorGreen,
                 contentColor = Color.White
             ){
                 Icon(
                     imageVector = Icons.Default.Add,
-                    contentDescription = "Add restaurant"
+                    contentDescription = "Add plate"
                 )
             }
         }
     ) {
         Column {
             AppHeader(
-                title = "Restaurants temp",
+                title = "Edit menu",
                 onClickBack = onBack
             )
 
-            LazyVerticalGrid(
+            LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(start = 15.dp, end = 5.dp, top = 10.dp),
-                columns = GridCells.Fixed(2)
             ) {
-                items(viewState.restaurants) { restaurant ->
+                items(restaurant.menu) {plate ->
                     Spacer(modifier = spacerModifier)
-                    RestaurantCard(
-                        modifier = Modifier.fillMaxWidth(),
-                        restaurant = restaurant,
-                        canDelete = true,
-                        onDeleteClick = {}
+
+                    // plate list item
+                    PlateListItem(
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        plate = plate,
+                        onDeletePlate = {
+                            controller.onEvent(MenuEvent.DeletePlate(it))
+                        }
                     )
+
                     Spacer(modifier = spacerModifier)
                 }
             }
