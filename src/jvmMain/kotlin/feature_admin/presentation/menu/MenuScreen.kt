@@ -48,7 +48,7 @@ fun MenuScreen(
             when(event){
                 is MenuController.UiEvent.ShowDeletePlateDialogConfirmation -> {
                     showTwoOptionsDialog = true
-                    errorDialogMessage = "Confirm delete?"
+                    errorDialogMessage = event.message
                 }
                 is MenuController.UiEvent.ShowDialog -> {
                     showDialog = true
@@ -85,7 +85,7 @@ fun MenuScreen(
         TwoOptionDialog(
             text = errorDialogMessage,
             onClickPositive = {
-                controller.onEvent(MenuEvent.ConfirmDelete)
+                controller.onEvent(MenuEvent.DeletionConfirmed)
                 showTwoOptionsDialog = false
             },
             onClickNegative = {

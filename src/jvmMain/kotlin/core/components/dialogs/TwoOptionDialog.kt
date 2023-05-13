@@ -34,25 +34,25 @@ fun TwoOptionDialog(
             fontWeight = FontWeight.Bold
         )
 
-        Spacer(modifier = ComeypagaStyles.spacerModifier)
+        Spacer(modifier = Modifier.fillMaxWidth().height(30.dp))
 
         Row {
             PrimaryButton(
                 modifier = Modifier
                     .weight(1f)
-                    .height(20.dp)
-                    .padding(horizontal = 10.dp),
-                content = "OK",
-                onClick = onClickPositive
-            )
-            PrimaryButton(
-                modifier = Modifier
-                    .weight(1f)
-                    .height(20.dp)
+                    .height(35.dp)
                     .padding(horizontal = 10.dp),
                 content = "Cancel",
                 onClick = onClickNegative,
                 backgroundColor = Color.Red
+            )
+            PrimaryButton(
+                modifier = Modifier
+                    .weight(1f)
+                    .height(35.dp)
+                    .padding(horizontal = 10.dp),
+                content = "OK",
+                onClick = onClickPositive
             )
         }
 

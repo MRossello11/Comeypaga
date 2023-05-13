@@ -6,5 +6,6 @@ import core.model.Restaurant
 data class AdminRestaurantsState(
     val restaurants: List<Restaurant> = listOf(),
     val query: String = "",
-    val response: BaseResponse = BaseResponse()
+    val response: BaseResponse = BaseResponse(),
+    val actualRestaurant: Restaurant? = null
 )

@@ -22,9 +22,9 @@ interface AdminDataSource {
         @Body restaurant: Restaurant
     ): Response<BaseResponse>
 
-    @DELETE("${WebService.BASE_URL}${WebService.RESTAURANTS}")
+    @DELETE("${WebService.BASE_URL}${WebService.RESTAURANTS}/{id}")
     suspend fun deleteRestaurant(
-        @Body id: String
+        @Path("id") _id: String
     ): Response<BaseResponse>
 
     @PUT("${WebService.BASE_URL}${WebService.RESTAURANTS}${WebService.MENU}")

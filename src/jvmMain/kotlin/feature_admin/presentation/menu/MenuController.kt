@@ -29,7 +29,7 @@ class MenuController(
                     _eventFlow.emit(UiEvent.ShowDeletePlateDialogConfirmation("Confirm deletion of ${_state.value.actualPlate!!.plateName}"))
                 }
             }
-            is ConfirmDelete -> {
+            is DeletionConfirmed -> {
                 _state.update { state ->
                     val newMenu = state.restaurant?.menu?.toMutableList() ?: mutableListOf()
 

@@ -30,4 +30,5 @@ object ComeypagaStyles {
         val spacerModifier: Modifier = Modifier.fillMaxWidth().height(20.dp)
 
         val standardDialogDimension = Dimension(325, 150)
+        val standardTwoOptionsDialogDimension = Dimension(350, 175)
 }

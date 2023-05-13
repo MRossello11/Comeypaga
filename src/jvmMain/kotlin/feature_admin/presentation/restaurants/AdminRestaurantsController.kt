@@ -16,9 +16,60 @@ class AdminRestaurantsController(
     val eventFlow = _eventFlow.asSharedFlow()
 
     init {
+        getRestaurants()
+    }
+
+    fun onEvent(event: AdminRestaurantsEvent){
+        when(event){
+            is AdminRestaurantsEvent.DeletionConfirmed -> {
+                CoroutineScope(Dispatchers.IO).launch{
+                    try {
+                        // delete restaurant
+                        adminUseCases.deleteRestaurant(
+                            callback = {
+                                _state.update { state ->
+                                    state.copy(
+                                        response = it,
+                                    )
+                                }
+                            },
+                            restaurantId = _state.value.actualRestaurant!!._id!!
+                        )
+
+                        // handle response
+                        if (_state.value.response.errorCode in 200..299){
+                            _eventFlow.emit(UiEvent.RestaurantDeleted("Restaurant '${_state.value.actualRestaurant!!.name}' deleted"))
+                            _state.update { state ->
+                                state.copy(
+                                    actualRestaurant = null
+                                )
+                            }
+                            getRestaurants()
+                        } else {
+                            _eventFlow.emit(UiEvent.ShowDialog(message = _state.value.response.message ?: "An error occurred deleting restaurant"))
+                        }
+                    } catch (e: Exception){
+                        _eventFlow.emit(UiEvent.ShowDialog("An error occurred deleting restaurant"))
+                    }
+                }
+            }
+            is AdminRestaurantsEvent.DeleteRestaurant -> {
+                _state.update { state ->
+                    state.copy(
+                        actualRestaurant = event.restaurant
+                    )
+                }
+                // show dialog confirmation
+                CoroutineScope(Dispatchers.IO).launch {
+                    _eventFlow.emit(UiEvent.ShowDeleteRestaurantDialogConfirmation("Confirm deletion of restaurant '${event.restaurant.name}'?"))
+                }
+            }
+        }
+    }
+
+    private fun getRestaurants(){
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                println("Calling get rest")
                 adminUseCases.getRestaurants(
                     callback = { response, restaurants ->
                         _state.update { state ->
@@ -27,20 +78,20 @@ class AdminRestaurantsController(
                                 restaurants = restaurants
                             )
                         }
-                        println("Gottem $restaurants")
                     }
                 )
                 if (_state.value.response.errorCode !in 200..299) {
                     _eventFlow.emit(UiEvent.ShowDialog(_state.value.response.message ?: "Error getting restaurants"))
                 }
             } catch (e: Exception){
-                e.printStackTrace()
                 _eventFlow.emit(UiEvent.ShowDialog("Error getting restaurants"))
             }
         }
     }
+
     sealed class UiEvent{
         data class ShowDialog(val message: String): UiEvent()
-
+        data class ShowDeleteRestaurantDialogConfirmation(val message: String): UiEvent()
+        data class RestaurantDeleted(val message: String): UiEvent()
     }
 }

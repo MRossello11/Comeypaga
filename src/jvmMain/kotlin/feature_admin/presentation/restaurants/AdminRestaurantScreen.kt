@@ -19,12 +19,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import core.ComeypagaStyles
 import core.ComeypagaStyles.spacerModifier
+import core.ComeypagaStyles.standardDialogDimension
+import core.ComeypagaStyles.standardTwoOptionsDialogDimension
 import core.components.AppHeader
 import core.components.dialogs.OneOptionDialog
+import core.components.dialogs.TwoOptionDialog
 import core.components.restaurants.RestaurantCard
 import core.model.Restaurant
 import kotlinx.coroutines.flow.collectLatest
-import java.awt.Dimension
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -38,6 +40,7 @@ fun AdminRestaurantScreen(
 
     // dialog states
     var showDialog by remember { mutableStateOf(false) }
+    var showTwoOptionsDialog by remember { mutableStateOf(false) }
     var errorDialogMessage by remember { mutableStateOf("") }
 
     LaunchedEffect(key1 = true){
@@ -46,6 +49,14 @@ fun AdminRestaurantScreen(
                 is AdminRestaurantsController.UiEvent.ShowDialog -> {
                     errorDialogMessage = event.message
                     showDialog = true
+                }
+                is AdminRestaurantsController.UiEvent.RestaurantDeleted -> {
+                    errorDialogMessage = event.message
+                    showDialog = true
+                }
+                is AdminRestaurantsController.UiEvent.ShowDeleteRestaurantDialogConfirmation -> {
+                    showTwoOptionsDialog = true
+                    errorDialogMessage = event.message
                 }
             }
         }
@@ -58,11 +69,31 @@ fun AdminRestaurantScreen(
             showDialog = false
         },
     ) {
-        this.window.size = Dimension(325, 150)
+        this.window.size = standardDialogDimension
         OneOptionDialog(
             text = errorDialogMessage,
             onClickButton = {
                 showDialog = false
+            }
+        )
+    }
+    Dialog(
+        title = "Aviso",
+        visible = showTwoOptionsDialog,
+        onCloseRequest = {
+            showTwoOptionsDialog = false
+        },
+    ) {
+        this.window.size = standardTwoOptionsDialogDimension
+        TwoOptionDialog(
+            text = errorDialogMessage,
+            onClickPositive = {
+                // delete restaurant
+                controller.onEvent(AdminRestaurantsEvent.DeletionConfirmed)
+                showTwoOptionsDialog = false
+            },
+            onClickNegative = {
+                showTwoOptionsDialog = false
             }
         )
     }
@@ -106,7 +137,9 @@ fun AdminRestaurantScreen(
                             },
                         restaurant = restaurant,
                         canDelete = true,
-                        onDeleteClick = {}
+                        onDeleteClick = {
+                            controller.onEvent(AdminRestaurantsEvent.DeleteRestaurant(restaurant))
+                        }
                     )
                     Spacer(modifier = spacerModifier)
                 }
