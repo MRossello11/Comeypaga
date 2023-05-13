@@ -141,14 +141,16 @@ fun MainContent(){
                 )
             }
             is Screen.AddModifyRestaurant -> {
-                AddModifyRestaurantScreen(
-                    controller = AddRestaurantController(adminUseCases),
-                    restaurant = screen.restaurant,
-                    onBack = navigation::pop,
-                    onClickEditMenu = {
-                        navigation.push(Screen.MenuScreen(it))
-                    }
-                )
+                screen.restaurant?.let {restaurant ->
+                    AddModifyRestaurantScreen(
+                        controller = AddRestaurantController(adminUseCases),
+                        restaurant = restaurant,
+                        onBack = navigation::pop,
+                        onClickEditMenu = {
+                            navigation.push(Screen.MenuScreen(it))
+                        }
+                    )
+                }
             }
             is Screen.MenuScreen -> {
                 val controller = MenuController(

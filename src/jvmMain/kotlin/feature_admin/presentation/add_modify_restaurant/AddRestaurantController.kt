@@ -14,7 +14,9 @@ class AddRestaurantController(
     private val adminUseCases: AdminUseCases
 ){
 
-    private val _state = MutableStateFlow(AddModifyRestaurantState())
+    private val _state = MutableStateFlow(AddModifyRestaurantState(
+        Restaurant("","","","","","","",Address("",""),"", listOf()),
+    ))
     val state = _state.asStateFlow()
 
     private val _eventFlow = MutableSharedFlow<UiEvent>()
@@ -28,57 +30,75 @@ class AddRestaurantController(
                     NAME -> {
                         _state.update { state ->
                             state.copy(
-                                name = event.value
+                                restaurant = state.restaurant.copy(
+                                    name = event.value
+                                )
                             )
                         }
                     }
                     FOOD_TYPE -> {
                         _state.update { state ->
                             state.copy(
-                                foodType = event.value
+                                restaurant = state.restaurant.copy(
+                                    foodType = event.value
+                                )
                             )
                         }
                     }
                     TYPOLOGY -> {
                         _state.update { state ->
                             state.copy(
-                                typology = event.value
-                            )
+                                restaurant = state.restaurant.copy(
+                                    typology = event.value
+                                )                            )
                         }
                     }
                     REVIEW_STARS -> {
                         _state.update { state ->
                             state.copy(
-                                reviewStars = event.value
+                                restaurant = state.restaurant.copy(
+                                    reviewStars = event.value
+                                )
                             )
                         }
                     }
                     PHONE -> {
                         _state.update { state ->
                             state.copy(
-                                phone = event.value
+                                restaurant = state.restaurant.copy(
+                                    phone = event.value
+                                )
                             )
                         }
                     }
                     EMAIL -> {
                         _state.update { state ->
                             state.copy(
-                                email = event.value
+                                restaurant = state.restaurant.copy(
+                                    email = event.value
+                                )
                             )
                         }
                     }
                     STREET -> {
                         _state.update { state ->
                             state.copy(
-                                street = event.value
+                                restaurant = state.restaurant.copy(
+                                    address = state.restaurant.address.copy(
+                                        street = event.value
+                                    )
+                                )
                             )
                         }
                     }
                     TOWN -> {
                         _state.update { state ->
                             state.copy(
-                                town = event.value
-                            )
+                                restaurant = state.restaurant.copy(
+                                    address = state.restaurant.address.copy(
+                                        town = event.value
+                                    )
+                                )                            )
                         }
                     }
                 }
@@ -90,18 +110,18 @@ class AddRestaurantController(
                         // create restaurant
                         adminUseCases.addRestaurant(
                             restaurant = Restaurant(
-                                name = _state.value.name,
-                                foodType = _state.value.foodType,
-                                typology = _state.value.typology,
-                                reviewStars = _state.value.reviewStars,
-                                phone = _state.value.phone,
-                                email = _state.value.email,
+                                name = _state.value.restaurant.name,
+                                foodType = _state.value.restaurant.foodType,
+                                typology = _state.value.restaurant.typology,
+                                reviewStars = _state.value.restaurant.reviewStars,
+                                phone = _state.value.restaurant.phone,
+                                email = _state.value.restaurant.email,
                                 address = Address(
-                                    street = _state.value.street,
-                                    town = _state.value.town
+                                    street = _state.value.restaurant.address.street,
+                                    town = _state.value.restaurant.address.town
                                 ),
                                 picture = "", // todo
-                                menu = _state.value.menu
+                                menu = _state.value.restaurant.menu
                             ),
                             callback = {
                                 _state.update { state ->

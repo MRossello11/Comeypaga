@@ -21,12 +21,16 @@ import kotlinx.coroutines.flow.collectLatest
 @Composable
 fun AddModifyRestaurantScreen(
     controller: AddRestaurantController,
-    restaurant: Restaurant? = null,
+    restaurant: Restaurant = Restaurant("","","","","","","",Address("",""),"", listOf()),
     onBack: () -> Unit,
     onClickEditMenu: (Restaurant) -> Unit
 ) {
     val viewState = controller.state.collectAsState()
-    var state by remember { mutableStateOf(AddModifyRestaurantState()) }
+    var state by remember { mutableStateOf(
+        AddModifyRestaurantState(
+            restaurant = restaurant
+        )
+    ) }
 
     // dialog states
     var showDialog by remember { mutableStateOf(false) }
@@ -91,11 +95,13 @@ fun AddModifyRestaurantScreen(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 LabeledTextField(
-                    value = state.name,
+                    value = state.restaurant.name,
                     label = "Name",
                     onValueChange = {
                         state = state.copy(
-                            name = it
+                            restaurant = state.restaurant.copy(
+                                name = it
+                            )
                         )
                         controller.onEvent(AddModifyRestaurantEvent.FieldEntered(value = it, field = RestaurantField.NAME))
                     }
@@ -104,11 +110,13 @@ fun AddModifyRestaurantScreen(
                 Spacer(modifier = spacerModifier)
 
                 LabeledTextField(
-                    value = state.typology,
+                    value = state.restaurant.typology,
                     label = "Typology",
                     onValueChange = {
                         state = state.copy(
-                            typology = it
+                            restaurant = state.restaurant.copy(
+                                typology = it
+                            )
                         )
                         controller.onEvent(AddModifyRestaurantEvent.FieldEntered(value = it, field = RestaurantField.TYPOLOGY))
                     }
@@ -117,11 +125,13 @@ fun AddModifyRestaurantScreen(
                 Spacer(modifier = spacerModifier)
 
                 LabeledTextField(
-                    value = state.email,
+                    value = state.restaurant.email,
                     label = "Email",
                     onValueChange = {
                         state = state.copy(
-                            email = it
+                            restaurant = state.restaurant.copy(
+                                email = it
+                            )
                         )
                         controller.onEvent(AddModifyRestaurantEvent.FieldEntered(value = it, field = RestaurantField.EMAIL))
                     }
@@ -130,11 +140,15 @@ fun AddModifyRestaurantScreen(
                 Spacer(modifier = spacerModifier)
 
                 LabeledTextField(
-                    value = state.town,
+                    value = state.restaurant.address.town,
                     label = "Town",
                     onValueChange = {
                         state = state.copy(
-                            town = it
+                            restaurant = state.restaurant.copy(
+                                address = state.restaurant.address.copy(
+                                    town = it
+                                )
+                            )
                         )
                         controller.onEvent(AddModifyRestaurantEvent.FieldEntered(value = it, field = RestaurantField.TOWN))
                     }
@@ -149,11 +163,13 @@ fun AddModifyRestaurantScreen(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 LabeledTextField(
-                    value = state.foodType,
+                    value = state.restaurant.foodType,
                     label = "Food type",
                     onValueChange = {
                         state = state.copy(
-                            foodType = it
+                            restaurant = state.restaurant.copy(
+                                foodType = it
+                            )
                         )
                         controller.onEvent(AddModifyRestaurantEvent.FieldEntered(value = it, field = RestaurantField.FOOD_TYPE))
                     }
@@ -162,11 +178,13 @@ fun AddModifyRestaurantScreen(
                 Spacer(modifier = spacerModifier)
 
                 LabeledTextField(
-                    value = state.reviewStars,
+                    value = state.restaurant.reviewStars,
                     label = "Stars",
                     onValueChange = {
                         state = state.copy(
-                            reviewStars = it
+                            restaurant = state.restaurant.copy(
+                                reviewStars = it
+                            )
                         )
                         controller.onEvent(AddModifyRestaurantEvent.FieldEntered(value = it, field = RestaurantField.REVIEW_STARS))
                     }
@@ -175,11 +193,13 @@ fun AddModifyRestaurantScreen(
                 Spacer(modifier = spacerModifier)
 
                 LabeledTextField(
-                    value = state.phone,
+                    value = state.restaurant.phone,
                     label = "Phone",
                     onValueChange = {
                         state = state.copy(
-                            phone = it
+                            restaurant = state.restaurant.copy(
+                                phone = it
+                            )
                         )
                         controller.onEvent(AddModifyRestaurantEvent.FieldEntered(value = it, field = RestaurantField.PHONE))
                     }
@@ -188,11 +208,15 @@ fun AddModifyRestaurantScreen(
                 Spacer(modifier = spacerModifier)
 
                 LabeledTextField(
-                    value = state.street,
+                    value = state.restaurant.address.street,
                     label = "Street",
                     onValueChange = {
                         state = state.copy(
-                            street = it
+                            restaurant = state.restaurant.copy(
+                                address = state.restaurant.address.copy(
+                                    street = it
+                                )
+                            )
                         )
                         controller.onEvent(AddModifyRestaurantEvent.FieldEntered(value = it, field = RestaurantField.STREET))
                     }
@@ -214,21 +238,7 @@ fun AddModifyRestaurantScreen(
                 content = "Edit menu",
                 onClick = {
                     onClickEditMenu(
-                        restaurant ?: Restaurant(
-                            _id = null,
-                            name = state.name,
-                            foodType = state.foodType,
-                            typology = state.typology,
-                            reviewStars = state.reviewStars,
-                            phone = state.phone,
-                            email = state.email,
-                            address = Address(
-                                street = state.street,
-                                town = state.town
-                            ),
-                            picture = "", // todo
-                            menu = listOf(),
-                        )
+                        restaurant
                     )
                 }
             )
