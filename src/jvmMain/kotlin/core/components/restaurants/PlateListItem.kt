@@ -26,7 +26,7 @@ fun PlateListItem(
     ) {
         // name and price
         Text(
-            text = "${plate.plateName} · ${plate.price}"
+            text = "${plate.plateName} · ${plate.price}€"
         )
 
         // description
