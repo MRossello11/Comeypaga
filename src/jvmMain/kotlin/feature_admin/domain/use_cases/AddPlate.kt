@@ -10,13 +10,18 @@ class AddPlate(
 ) {
     suspend operator fun invoke(plateRequest: PlateRequest, callback: (response: BaseResponse) -> Unit){
         // verify field
-        if (plateRequest.plateName.isEmpty()){
+        if (plateRequest.plateName?.isEmpty() == true){
             throw InvalidPlateRequest("Plate name cannot be empty")
         }
-        if (plateRequest.price < 0){
+        plateRequest.price?.let {
+            if (it < 0){
+                throw InvalidPlateRequest("Invalid price")
+            }
+        } ?: run {
             throw InvalidPlateRequest("Invalid price")
         }
-        if (plateRequest.type.isEmpty()){
+
+        if (plateRequest.type?.isEmpty() == true){
             throw InvalidPlateRequest("Plate type cannot be empty")
         }
 

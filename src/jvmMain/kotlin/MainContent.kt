@@ -135,11 +135,15 @@ fun MainContent(){
                     onAddRestaurant = {
                         navigation.push(Screen.AddModifyRestaurant(null))
                     },
+                    onClickRestaurant = {
+                        navigation.push(Screen.AddModifyRestaurant(it))
+                    }
                 )
             }
             is Screen.AddModifyRestaurant -> {
                 AddModifyRestaurantScreen(
                     controller = AddRestaurantController(adminUseCases),
+                    restaurant = screen.restaurant,
                     onBack = navigation::pop,
                     onClickEditMenu = {
                         navigation.push(Screen.MenuScreen(it))

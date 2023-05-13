@@ -99,7 +99,7 @@ fun MenuScreen(
         floatingActionButton = {
             FloatingActionButton(
                 modifier = Modifier,
-                onClick = { restaurant.id?.let { onClickAddPlate(it) } },
+                onClick = { restaurant._id?.let { onClickAddPlate(it) } },
                 shape = CircleShape,
                 containerColor = ComeypagaStyles.primaryColorGreen,
                 contentColor = Color.White
@@ -122,7 +122,7 @@ fun MenuScreen(
                     .fillMaxSize()
                     .padding(start = 15.dp, end = 5.dp, top = 10.dp),
             ) {
-                items(restaurant.menu) {plate ->
+                items(restaurant.menu ?: listOf()) { plate ->
                     Spacer(modifier = spacerModifier)
 
                     // plate list item

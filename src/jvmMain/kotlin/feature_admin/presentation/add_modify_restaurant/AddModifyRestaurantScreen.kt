@@ -21,14 +21,12 @@ import kotlinx.coroutines.flow.collectLatest
 @Composable
 fun AddModifyRestaurantScreen(
     controller: AddRestaurantController,
+    restaurant: Restaurant? = null,
     onBack: () -> Unit,
     onClickEditMenu: (Restaurant) -> Unit
 ) {
     val viewState = controller.state.collectAsState()
     var state by remember { mutableStateOf(AddModifyRestaurantState()) }
-
-    // textfield modifier
-    val textFieldModifier = Modifier.fillMaxWidth(1f)
 
     // dialog states
     var showDialog by remember { mutableStateOf(false) }
@@ -216,8 +214,8 @@ fun AddModifyRestaurantScreen(
                 content = "Edit menu",
                 onClick = {
                     onClickEditMenu(
-                        Restaurant(
-                            id = null,
+                        restaurant ?: Restaurant(
+                            _id = null,
                             name = state.name,
                             foodType = state.foodType,
                             typology = state.typology,

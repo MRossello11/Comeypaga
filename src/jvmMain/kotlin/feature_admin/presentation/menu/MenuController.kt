@@ -26,7 +26,7 @@ class MenuController(
                     )
                 }
                 CoroutineScope(Dispatchers.IO).launch {
-                    _eventFlow.emit(UiEvent.ShowDeletePlateDialogConfirmation("Confirm deletion of ${_state.value.actualPlate!!.name}"))
+                    _eventFlow.emit(UiEvent.ShowDeletePlateDialogConfirmation("Confirm deletion of ${_state.value.actualPlate!!.plateName}"))
                 }
             }
             is ConfirmDelete -> {
@@ -54,8 +54,8 @@ class MenuController(
                             }
                         },
                         plateRequest = PlateRequest(
-                            restaurantId = _state.value.restaurant?.id!!,
-                            plateId = _state.value.actualPlate?.id!!
+                            restaurantId = _state.value.restaurant?._id!!,
+                            plateId = _state.value.actualPlate?._id!!
                         )
                     )
 

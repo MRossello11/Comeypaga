@@ -24,7 +24,9 @@ fun RestaurantCard(
     onDeleteClick: () -> Unit
 ) {
 
-    val price = calculateRestaurantPrice(restaurant.menu)
+    val price = calculateRestaurantPrice(
+        restaurant.menu ?: listOf()
+    )
 
     Box(
         modifier = modifier

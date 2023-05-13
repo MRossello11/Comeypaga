@@ -1,5 +1,6 @@
 package feature_admin.presentation.restaurants
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -21,6 +22,7 @@ import core.ComeypagaStyles.spacerModifier
 import core.components.AppHeader
 import core.components.dialogs.OneOptionDialog
 import core.components.restaurants.RestaurantCard
+import core.model.Restaurant
 import kotlinx.coroutines.flow.collectLatest
 import java.awt.Dimension
 
@@ -30,6 +32,7 @@ fun AdminRestaurantScreen(
     controller: AdminRestaurantsController,
     onBack: () -> Unit,
     onAddRestaurant: () -> Unit,
+    onClickRestaurant: (Restaurant) -> Unit
 ){
     val viewState: AdminRestaurantsState by controller.state.collectAsState()
 
@@ -96,7 +99,11 @@ fun AdminRestaurantScreen(
                 items(viewState.restaurants) { restaurant ->
                     Spacer(modifier = spacerModifier)
                     RestaurantCard(
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable {
+                                onClickRestaurant(restaurant)
+                            },
                         restaurant = restaurant,
                         canDelete = true,
                         onDeleteClick = {}
