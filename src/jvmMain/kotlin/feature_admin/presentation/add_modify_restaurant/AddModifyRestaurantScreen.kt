@@ -104,7 +104,7 @@ fun AddModifyRestaurantScreen(
                                 name = it
                             )
                         )
-                        controller.onEvent(AddModifyRestaurantEvent.FieldEntered(restaurant = restaurant))
+                        controller.onEvent(AddModifyRestaurantEvent.FieldEntered(restaurant = state.restaurant))
                     }
                 )
 
@@ -172,7 +172,7 @@ fun AddModifyRestaurantScreen(
                                 foodType = it
                             )
                         )
-                        controller.onEvent(AddModifyRestaurantEvent.FieldEntered(restaurant = restaurant))
+                        controller.onEvent(AddModifyRestaurantEvent.FieldEntered(restaurant = state.restaurant))
                     }
                 )
 
@@ -187,7 +187,7 @@ fun AddModifyRestaurantScreen(
                                 reviewStars = it
                             )
                         )
-                        controller.onEvent(AddModifyRestaurantEvent.FieldEntered(restaurant = restaurant))
+                        controller.onEvent(AddModifyRestaurantEvent.FieldEntered(restaurant = state.restaurant))
                     }
                 )
 
@@ -202,7 +202,7 @@ fun AddModifyRestaurantScreen(
                                 phone = it
                             )
                         )
-                        controller.onEvent(AddModifyRestaurantEvent.FieldEntered(restaurant = restaurant))
+                        controller.onEvent(AddModifyRestaurantEvent.FieldEntered(restaurant = state.restaurant))
                     }
                 )
 
@@ -219,7 +219,7 @@ fun AddModifyRestaurantScreen(
                                 )
                             )
                         )
-                        controller.onEvent(AddModifyRestaurantEvent.FieldEntered(restaurant = restaurant))
+                        controller.onEvent(AddModifyRestaurantEvent.FieldEntered(restaurant = state.restaurant))
                     }
                 )
             }
