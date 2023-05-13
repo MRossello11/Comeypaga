@@ -37,8 +37,6 @@ fun MenuScreen(
     onClickAddPlate: (String) -> Unit
 ){
 
-    val viewState: MenuState by controller.state.collectAsState()
-
     // dialog states
     var showDialog by remember { mutableStateOf(false) }
     var showTwoOptionsDialog by remember { mutableStateOf(false) }
@@ -132,6 +130,7 @@ fun MenuScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                             .clickable {
+                                controller.onEvent(MenuEvent.SetPlate(plate))
                                 onClickPlate(plate)
                             },
                         plate = plate,

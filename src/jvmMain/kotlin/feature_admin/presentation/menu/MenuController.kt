@@ -71,6 +71,14 @@ class MenuController(
                     )
                 }
             }
+
+            is SetPlate -> {
+                _state.update { state ->
+                    state.copy(
+                        actualPlate = event.plate
+                    )
+                }
+            }
         }
     }
 
