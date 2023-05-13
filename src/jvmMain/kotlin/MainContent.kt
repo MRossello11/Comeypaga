@@ -69,7 +69,6 @@ fun MainContent(){
     val adminUseCases = AdminUseCases(
         getRestaurants = GetRestaurants(adminRepository),
         addRestaurant = AddRestaurant(adminRepository),
-        modifyRestaurant = ModifyRestaurant(adminRepository),
         deleteRestaurant = DeleteRestaurant(adminRepository),
         addPlate = AddPlate(adminRepository),
         modifyPlate = ModifyPlate(adminRepository),
@@ -148,7 +147,8 @@ fun MainContent(){
                         onBack = navigation::pop,
                         onClickEditMenu = {
                             navigation.push(Screen.MenuScreen(it))
-                        }
+                        },
+                        newRestaurant = screen.restaurant._id?.let { false } ?: true
                     )
                 }
             }

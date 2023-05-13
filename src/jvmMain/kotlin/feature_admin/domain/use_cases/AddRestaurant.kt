@@ -9,7 +9,7 @@ class AddRestaurant(
     private val adminRepository: AdminRepository
 ){
     suspend operator fun invoke(
-        restaurant: Restaurant, callback: (response: BaseResponse) -> Unit
+        restaurant: Restaurant, callback: (response: BaseResponse) -> Unit, newRestaurant: Boolean
     ){
         // verify fields
         if (restaurant.name.isEmpty()){
@@ -58,6 +58,10 @@ class AddRestaurant(
 
         if (stars !in 0f..5f) throw InvalidRestaurant("Invalid review stars")
 
-        adminRepository.putRestaurant(restaurant, callback)
+        if (newRestaurant){
+            adminRepository.putRestaurant(restaurant, callback)
+        } else {
+            adminRepository.postRestaurant(restaurant, callback)
+        }
     }
 }

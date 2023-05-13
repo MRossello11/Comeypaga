@@ -23,7 +23,8 @@ fun AddModifyRestaurantScreen(
     controller: AddRestaurantController,
     restaurant: Restaurant = Restaurant("","","","","","","",Address("",""),"", listOf()),
     onBack: () -> Unit,
-    onClickEditMenu: (Restaurant) -> Unit
+    onClickEditMenu: (Restaurant) -> Unit,
+    newRestaurant: Boolean = false
 ) {
     val viewState = controller.state.collectAsState()
     var state by remember { mutableStateOf(
@@ -103,7 +104,7 @@ fun AddModifyRestaurantScreen(
                                 name = it
                             )
                         )
-                        controller.onEvent(AddModifyRestaurantEvent.FieldEntered(value = it, field = RestaurantField.NAME))
+                        controller.onEvent(AddModifyRestaurantEvent.FieldEntered(restaurant = restaurant))
                     }
                 )
 
@@ -118,7 +119,7 @@ fun AddModifyRestaurantScreen(
                                 typology = it
                             )
                         )
-                        controller.onEvent(AddModifyRestaurantEvent.FieldEntered(value = it, field = RestaurantField.TYPOLOGY))
+                        controller.onEvent(AddModifyRestaurantEvent.FieldEntered(restaurant = state.restaurant))
                     }
                 )
 
@@ -133,7 +134,7 @@ fun AddModifyRestaurantScreen(
                                 email = it
                             )
                         )
-                        controller.onEvent(AddModifyRestaurantEvent.FieldEntered(value = it, field = RestaurantField.EMAIL))
+                        controller.onEvent(AddModifyRestaurantEvent.FieldEntered(restaurant = state.restaurant))
                     }
                 )
 
@@ -150,7 +151,7 @@ fun AddModifyRestaurantScreen(
                                 )
                             )
                         )
-                        controller.onEvent(AddModifyRestaurantEvent.FieldEntered(value = it, field = RestaurantField.TOWN))
+                        controller.onEvent(AddModifyRestaurantEvent.FieldEntered(restaurant = state.restaurant))
                     }
                 )
             }
@@ -171,7 +172,7 @@ fun AddModifyRestaurantScreen(
                                 foodType = it
                             )
                         )
-                        controller.onEvent(AddModifyRestaurantEvent.FieldEntered(value = it, field = RestaurantField.FOOD_TYPE))
+                        controller.onEvent(AddModifyRestaurantEvent.FieldEntered(restaurant = restaurant))
                     }
                 )
 
@@ -186,7 +187,7 @@ fun AddModifyRestaurantScreen(
                                 reviewStars = it
                             )
                         )
-                        controller.onEvent(AddModifyRestaurantEvent.FieldEntered(value = it, field = RestaurantField.REVIEW_STARS))
+                        controller.onEvent(AddModifyRestaurantEvent.FieldEntered(restaurant = restaurant))
                     }
                 )
 
@@ -201,7 +202,7 @@ fun AddModifyRestaurantScreen(
                                 phone = it
                             )
                         )
-                        controller.onEvent(AddModifyRestaurantEvent.FieldEntered(value = it, field = RestaurantField.PHONE))
+                        controller.onEvent(AddModifyRestaurantEvent.FieldEntered(restaurant = restaurant))
                     }
                 )
 
@@ -218,7 +219,7 @@ fun AddModifyRestaurantScreen(
                                 )
                             )
                         )
-                        controller.onEvent(AddModifyRestaurantEvent.FieldEntered(value = it, field = RestaurantField.STREET))
+                        controller.onEvent(AddModifyRestaurantEvent.FieldEntered(restaurant = restaurant))
                     }
                 )
             }
@@ -263,7 +264,11 @@ fun AddModifyRestaurantScreen(
                         .padding(horizontal = 10.dp),
                     content = "Save",
                     onClick = {
-                        controller.onEvent(AddModifyRestaurantEvent.CreateRestaurant)
+                        if (newRestaurant) {
+                            controller.onEvent(AddModifyRestaurantEvent.CreateRestaurant)
+                        } else {
+                            controller.onEvent(AddModifyRestaurantEvent.ModifyRestaurant)
+                        }
                     }
                 )
             }
