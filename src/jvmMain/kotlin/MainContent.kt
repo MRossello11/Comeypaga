@@ -140,7 +140,7 @@ fun MainContent(){
                 )
             }
             is Screen.AddModifyRestaurant -> {
-                screen.restaurant?.let {restaurant ->
+                screen.restaurant?.let { restaurant ->
                     AddModifyRestaurantScreen(
                         controller = AddRestaurantController(adminUseCases),
                         restaurant = restaurant,
@@ -149,6 +149,15 @@ fun MainContent(){
                             navigation.push(Screen.MenuScreen(it))
                         },
                         newRestaurant = screen.restaurant._id?.let { false } ?: true
+                    )
+                } ?: run {
+                    AddModifyRestaurantScreen(
+                        controller = AddRestaurantController(adminUseCases),
+                        onBack = navigation::pop,
+                        onClickEditMenu = {
+                            navigation.push(Screen.MenuScreen(it))
+                        },
+                        newRestaurant = true
                     )
                 }
             }
