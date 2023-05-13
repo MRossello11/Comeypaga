@@ -8,13 +8,13 @@ data class PlateRequest(
     @SerializedName("plateId")
     val plateId: String,
     @SerializedName("plateName")
-    val plateName: String,
+    val plateName: String? = null,
     @SerializedName("description")
-    val description: String?,
+    val description: String? = null,
     @SerializedName("price")
-    val price: Float,
+    val price: Float? = null,
     @SerializedName("type")
-    val type: String
+    val type: String? = null
 )
 
 class InvalidPlateRequest(message: String): Exception(message)

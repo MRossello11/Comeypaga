@@ -1,5 +1,6 @@
 package feature_admin.presentation.menu
 
+import feature_admin.domain.model.PlateRequest
 import feature_admin.domain.use_cases.AdminUseCases
 import feature_admin.presentation.menu.MenuEvent.*
 import kotlinx.coroutines.CoroutineScope
@@ -30,26 +31,47 @@ class MenuController(
             }
             is ConfirmDelete -> {
                 _state.update { state ->
-                    val newMenu = state.menu.toMutableList()
+                    val newMenu = state.restaurant?.menu?.toMutableList() ?: mutableListOf()
 
                     newMenu.remove(state.actualPlate)
 
                     state.copy(
                         actualPlate = null,
-                        menu = newMenu
+                        restaurant = state.restaurant?.copy(
+                            menu = newMenu
+                        )
                     )
+                }
+
+                // delete plate
+                CoroutineScope(Dispatchers.IO).launch{
+                    adminUseCases.deletePlate(
+                        callback = { response ->
+                            _state.update { state ->
+                                state.copy(
+                                    response = response
+                                )
+                            }
+                        },
+                        plateRequest = PlateRequest(
+                            restaurantId = _state.value.restaurant?.id!!,
+                            plateId = _state.value.actualPlate?.id!!
+                        )
+                    )
+
                 }
             }
 
             is SetPlates -> {
                 _state.update { state ->
                     state.copy(
-                        menu = event.plates
+                        restaurant = state.restaurant?.copy(
+                            menu = event.plates
+                        )
                     )
                 }
             }
         }
-
     }
 
     sealed class UiEvent{

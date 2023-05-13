@@ -1,5 +1,6 @@
 package feature_admin.presentation.menu
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -36,7 +37,6 @@ fun MenuScreen(
     onClickAddPlate: (String) -> Unit
 ){
 
-    val actualPlate by remember{ mutableStateOf(Plate("","","","","")) }
     val viewState: MenuState by controller.state.collectAsState()
 
     // dialog states
@@ -53,7 +53,8 @@ fun MenuScreen(
                     errorDialogMessage = "Confirm delete?"
                 }
                 is MenuController.UiEvent.ShowDialog -> {
-
+                    showDialog = true
+                    errorDialogMessage = event.message
                 }
             }
         }
@@ -129,7 +130,10 @@ fun MenuScreen(
                     // plate list item
                     PlateListItem(
                         modifier = Modifier
-                            .fillMaxWidth(),
+                            .fillMaxWidth()
+                            .clickable {
+                                onClickPlate(plate)
+                            },
                         plate = plate,
                         onDeletePlate = {
                             controller.onEvent(MenuEvent.DeletePlate(it))
