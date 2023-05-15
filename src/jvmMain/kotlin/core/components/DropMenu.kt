@@ -21,14 +21,15 @@ import core.ComeypagaStyles
 fun DropMenu(
     modifier: Modifier = Modifier,
     items: List<String>,
-    onItemClick: (String) -> Unit
+    onItemClick: (String) -> Unit,
+    selectedItem: String
 ) {
     // state of the menu
     var expanded by remember {
         mutableStateOf(false)
     }
     var currentItem by remember {
-        mutableStateOf("Type")
+        mutableStateOf(selectedItem)
     }
 
     Box(
@@ -85,7 +86,8 @@ fun PreviewDropMenu(){
         DropMenu(
             modifier = Modifier.fillMaxWidth(),
             items = listOf("starter", "main", "drink", "dessert"),
-            onItemClick = {}
+            onItemClick = {},
+            selectedItem = "Type"
         )
     }
 }

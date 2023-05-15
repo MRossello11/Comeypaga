@@ -135,7 +135,7 @@ fun AddModifyPlateScreen(
                 )
                 Spacer(modifier = spacerModifier)
                 DropMenu(
-                    items = listOf("starter", "main", "drink", "dessert"),
+                    items = listOf("Starter", "Main", "Drink", "Dessert"),
                     onItemClick = {
                         state = state.copy(
                             plate = state.plate?.copy(
@@ -143,7 +143,8 @@ fun AddModifyPlateScreen(
                             )
                         )
                         controller.onEvent(AddModifyPlateEvent.FieldEntered(state.plate!!))
-                    }
+                    },
+                    selectedItem = state.plate?.type?.ifEmpty{ "Type" } ?: "Type"
                 )
             }
         }

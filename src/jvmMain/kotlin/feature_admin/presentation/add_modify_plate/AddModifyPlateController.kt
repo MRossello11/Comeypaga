@@ -55,6 +55,15 @@ class AddModifyPlateController (
                         )
                         // handle response
                         if (_state.value.response.errorCode in 200..299){
+                            val newMenu = _state.value.restaurant?.menu?.toMutableList() ?: mutableListOf()
+                            newMenu.add(_state.value.plate!!)
+                            _state.update { state ->
+                                state.copy(
+                                    restaurant = state.restaurant?.copy(
+                                        menu = newMenu
+                                    )
+                                )
+                            }
                             _eventFlow.emit(UiEvent.PlateCreated)
                         } else {
                             _eventFlow.emit(UiEvent.ShowDialog(message = _state.value.response.message ?: "An error occurred"))
@@ -76,6 +85,7 @@ class AddModifyPlateController (
                         adminUseCases.addPlate(
                             plateRequest = PlateRequest(
                                 restaurantId = _state.value.restaurant?._id!!,
+                                plateId = _state.value.plate?._id,
                                 plateName = _state.value.plate?.plateName!!,
                                 description = _state.value.plate?.description!!,
                                 price = _state.value.plate?.price!!,
@@ -92,6 +102,23 @@ class AddModifyPlateController (
                         )
                         // handle response
                         if (_state.value.response.errorCode in 200..299) {
+                            // todo?
+                            val modifiedMenu = _state.value.restaurant?.menu?.toMutableList() ?: mutableListOf()
+                            modifiedMenu.forEachIndexed { index, plate ->
+                                if (plate._id == _state.value.plate?._id){
+                                    modifiedMenu[index] = _state.value.plate!!
+                                    return@forEachIndexed
+                                }
+                            }
+
+                            _state.update { state ->
+                                state.copy(
+                                    restaurant = state.restaurant?.copy(
+                                        menu = modifiedMenu
+                                    )
+                                )
+                            }
+
                             _eventFlow.emit(UiEvent.PlateCreated)
                         } else {
                             _eventFlow.emit(
