@@ -1,5 +1,7 @@
 package feature_admin.presentation.menu
 
+import core.model.InvalidRestaurant
+import core.model.Restaurant
 import feature_admin.domain.model.PlateRequest
 import feature_admin.domain.use_cases.AdminUseCases
 import feature_admin.presentation.menu.MenuEvent.*
@@ -9,13 +11,40 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
 class MenuController(
-    private val adminUseCases: AdminUseCases
+    private val adminUseCases: AdminUseCases,
+    private val restaurant: Restaurant
 ) {
     private val _state = MutableStateFlow(MenuState())
     val state = _state.asStateFlow()
 
     private val _eventFlow = MutableSharedFlow<UiEvent>()
     val eventFlow = _eventFlow.asSharedFlow()
+
+    init{
+        _state.update { state ->
+            state.copy(
+                restaurant = restaurant
+            )
+        }
+        // get restaurant
+        CoroutineScope(Dispatchers.IO).launch{
+            try {
+                adminUseCases.getRestaurant(
+                    restaurant = _state.value.restaurant!!,
+                    callback = { response, restaurant ->
+                        _state.update { state ->
+                            state.copy(
+                                response = response,
+                                restaurant = restaurant
+                            )
+                        }
+                    }
+                )
+            } catch (ir: InvalidRestaurant){
+                _eventFlow.emit(UiEvent.ShowDialog(ir.message ?: "An error occurred"))
+            }
+        }
+    }
 
     fun onEvent(event: MenuEvent){
         when(event){

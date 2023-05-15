@@ -13,7 +13,11 @@ data class Restaurant(
     val menu: List<Plate>?
 )
 
-data class RestaurantWrapper(
+data class RestaurantsWrapper(
     val restaurants: List<Restaurant>
+)
+
+data class RestaurantWrapper(
+    val restaurant: Restaurant
 )
 class InvalidRestaurant(message: String): Exception(message)

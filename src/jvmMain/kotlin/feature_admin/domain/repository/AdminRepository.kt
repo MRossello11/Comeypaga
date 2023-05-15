@@ -5,6 +5,7 @@ import core.model.Restaurant
 import feature_admin.domain.model.PlateRequest
 
 interface AdminRepository {
+    suspend fun getRestaurant(restaurantId: String, callback: (response: BaseResponse, restaurant: Restaurant?) -> Unit)
     suspend fun getRestaurants(callback: (response: BaseResponse, restaurants: ArrayList<Restaurant>) -> Unit)
     suspend fun postRestaurant(restaurant: Restaurant, callback: (response: BaseResponse) -> Unit)
     suspend fun putRestaurant(restaurant: Restaurant, callback: (response: BaseResponse) -> Unit)

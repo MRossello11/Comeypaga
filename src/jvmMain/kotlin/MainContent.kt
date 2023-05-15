@@ -71,6 +71,7 @@ fun MainContent(){
     )
 
     val adminUseCases = AdminUseCases(
+        getRestaurant = GetRestaurant(adminRepository),
         getRestaurants = GetRestaurants(adminRepository),
         addRestaurant = AddRestaurant(adminRepository),
         deleteRestaurant = DeleteRestaurant(adminRepository),
@@ -166,12 +167,12 @@ fun MainContent(){
                 }
             }
             is Screen.MenuScreen -> {
-                val controller = MenuController(
-                    adminUseCases = adminUseCases
-                )
                 MenuScreen(
                     restaurant = screen.restaurant,
-                    controller = controller,
+                    controller = MenuController(
+                        adminUseCases = adminUseCases,
+                        restaurant = screen.restaurant
+                    ),
                     onBack = navigation::pop,
                     onClickAddPlate = {
                         navigation.push(Screen.AddModifyPlateScreen(it, null))

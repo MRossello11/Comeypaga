@@ -12,6 +12,22 @@ import feature_admin.domain.repository.AdminRepository
 class AdminRepositoryImpl(
     private val adminDataSource: AdminDataSource
 ): AdminRepository {
+    override suspend fun getRestaurant(restaurantId: String, callback: (response: BaseResponse, restaurant: Restaurant?) -> Unit) {
+        val response = adminDataSource.getRestaurant(restaurantId)
+
+        if (response.code() in 200..299){
+            response.body()?.let {
+                callback(BaseResponse(response.code(), response.message()), it.restaurant)
+            } ?: run{
+                callback(BaseResponse(response.code(), "An error occurred"), null)
+            }
+        } else {
+            val errorBody = response.errorBody()?.string()
+            val errorResponse = Gson().fromJson(errorBody, ErrorResponse::class.java)
+            callback(BaseResponse(response.code(), errorResponse.message ?: "An error occurred"), null)
+        }
+    }
+
     override suspend fun getRestaurants(callback: (response: BaseResponse, restaurants: ArrayList<Restaurant>) -> Unit) {
         val response = adminDataSource.getRestaurants()
 

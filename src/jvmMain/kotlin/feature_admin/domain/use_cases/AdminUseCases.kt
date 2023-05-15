@@ -1,6 +1,7 @@
 package feature_admin.domain.use_cases
 
 data class AdminUseCases(
+    val getRestaurant: GetRestaurant,
     val getRestaurants: GetRestaurants,
     val addRestaurant: AddRestaurant,
     val deleteRestaurant: DeleteRestaurant,

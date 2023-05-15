@@ -36,7 +36,7 @@ fun MenuScreen(
     onClickPlate: (Restaurant, Plate) -> Unit,
     onClickAddPlate: (Restaurant) -> Unit
 ){
-
+    val viewState: MenuState by controller.state.collectAsState()
     // dialog states
     var showDialog by remember { mutableStateOf(false) }
     var showTwoOptionsDialog by remember { mutableStateOf(false) }
@@ -122,7 +122,7 @@ fun MenuScreen(
                     .fillMaxSize()
                     .padding(start = 15.dp, end = 5.dp, top = 10.dp),
             ) {
-                items(restaurant.menu ?: listOf()) { plate ->
+                items(viewState.restaurant?.menu ?: listOf()) { plate ->
                     Spacer(modifier = spacerModifier)
 
                     // plate list item
@@ -138,8 +138,6 @@ fun MenuScreen(
                             controller.onEvent(MenuEvent.DeletePlate(it))
                         }
                     )
-
-                    Spacer(modifier = spacerModifier)
                 }
             }
         }

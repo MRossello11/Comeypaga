@@ -4,13 +4,19 @@ import core.Constants.WebService
 import core.model.BaseResponse
 import core.model.Restaurant
 import core.model.RestaurantWrapper
+import core.model.RestaurantsWrapper
 import feature_admin.domain.model.PlateRequest
 import retrofit2.Response
 import retrofit2.http.*
 
 interface AdminDataSource {
+    @GET("${WebService.BASE_URL}${WebService.RESTAURANTS}/{id}")
+    suspend fun getRestaurant(
+        @Path("id") _id: String
+    ): Response<RestaurantWrapper>
+
     @GET("${WebService.BASE_URL}${WebService.RESTAURANTS}")
-    suspend fun getRestaurants(): Response<RestaurantWrapper>
+    suspend fun getRestaurants(): Response<RestaurantsWrapper>
 
     @POST("${WebService.BASE_URL}${WebService.RESTAURANTS}")
     suspend fun postRestaurant(
