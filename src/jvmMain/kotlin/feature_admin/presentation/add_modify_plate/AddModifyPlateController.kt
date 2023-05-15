@@ -27,7 +27,12 @@ class AddModifyPlateController (
                     )
                 }
             }
-            AddModifyPlateEvent.CreatePlate -> {
+            is AddModifyPlateEvent.CreatePlate -> {
+                _state.update { state ->
+                    state.copy(
+                        restaurant = event.restaurant
+                    )
+                }
                 CoroutineScope(Dispatchers.IO).launch {
                     try {
                         adminUseCases.addPlate(
@@ -60,7 +65,12 @@ class AddModifyPlateController (
                     }
                 }
             }
-            AddModifyPlateEvent.ModifyPlate -> {
+            is AddModifyPlateEvent.ModifyPlate -> {
+                _state.update { state ->
+                    state.copy(
+                        restaurant = event.restaurant
+                    )
+                }
                 CoroutineScope(Dispatchers.IO).launch {
                     try {
                         adminUseCases.addPlate(

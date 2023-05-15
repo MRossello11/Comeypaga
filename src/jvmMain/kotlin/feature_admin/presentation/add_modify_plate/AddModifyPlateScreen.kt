@@ -171,9 +171,9 @@ fun AddModifyPlateScreen(
                     content = "Save",
                     onClick = {
                         if (newPlate) {
-                            controller.onEvent(AddModifyPlateEvent.CreatePlate)
+                            controller.onEvent(AddModifyPlateEvent.CreatePlate(restaurant = restaurant))
                         } else {
-                            controller.onEvent(AddModifyPlateEvent.ModifyPlate)
+                            controller.onEvent(AddModifyPlateEvent.ModifyPlate(restaurant = restaurant))
                         }
                     }
                 )
