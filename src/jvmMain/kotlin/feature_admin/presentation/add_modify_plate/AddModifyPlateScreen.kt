@@ -150,6 +150,9 @@ fun AddModifyPlateScreen(
 
         // buttons
         Row(
+            modifier = Modifier
+                .fillMaxHeight()
+                .padding(bottom = 20.dp),
             verticalAlignment = Alignment.Bottom
         ) {
             Row {
@@ -178,12 +181,6 @@ fun AddModifyPlateScreen(
                     }
                 )
             }
-
-            Spacer(modifier = spacerModifier)
-
         }
-
     }
-
-
 }
