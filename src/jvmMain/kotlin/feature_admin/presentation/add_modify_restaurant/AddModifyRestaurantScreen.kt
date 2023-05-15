@@ -20,7 +20,7 @@ import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun AddModifyRestaurantScreen(
-    controller: AddRestaurantController,
+    controller: AddModifyRestaurantController,
     restaurant: Restaurant = Restaurant("","","","","","","",Address("",""),"", listOf()),
     onBack: () -> Unit,
     onClickEditMenu: (Restaurant) -> Unit,
@@ -40,11 +40,11 @@ fun AddModifyRestaurantScreen(
     LaunchedEffect(key1 = true) {
         controller.eventFlow.collectLatest { event ->
             when(event){
-                AddRestaurantController.UiEvent.RestaurantCreated -> {
+                AddModifyRestaurantController.UiEvent.RestaurantCreated -> {
                     errorDialogMessage = viewState.value.addModifyRestaurantResponse.message ?: "Restaurant created!"
                     showDialog = true
                 }
-                is AddRestaurantController.UiEvent.ShowDialog -> {
+                is AddModifyRestaurantController.UiEvent.ShowDialog -> {
                     errorDialogMessage = event.message
                     showDialog = true
                 }

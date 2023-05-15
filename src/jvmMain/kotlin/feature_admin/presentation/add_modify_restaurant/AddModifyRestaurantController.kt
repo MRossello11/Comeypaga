@@ -9,7 +9,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
-class AddRestaurantController(
+class AddModifyRestaurantController(
     private val adminUseCases: AdminUseCases
 ){
 

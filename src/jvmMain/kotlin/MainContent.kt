@@ -19,8 +19,8 @@ import feature_admin.data.data_source.AdminDataSource
 import feature_admin.domain.use_cases.*
 import feature_admin.presentation.add_modify_plate.AddModifyPlateController
 import feature_admin.presentation.add_modify_plate.AddModifyPlateScreen
+import feature_admin.presentation.add_modify_restaurant.AddModifyRestaurantController
 import feature_admin.presentation.add_modify_restaurant.AddModifyRestaurantScreen
-import feature_admin.presentation.add_modify_restaurant.AddRestaurantController
 import feature_admin.presentation.menu.MenuController
 import feature_admin.presentation.menu.MenuScreen
 import feature_admin.presentation.restaurants.AdminRestaurantScreen
@@ -146,7 +146,7 @@ fun MainContent(){
             is Screen.AddModifyRestaurant -> {
                 screen.restaurant?.let { restaurant ->
                     AddModifyRestaurantScreen(
-                        controller = AddRestaurantController(adminUseCases),
+                        controller = AddModifyRestaurantController(adminUseCases),
                         restaurant = restaurant,
                         onBack = navigation::pop,
                         onClickEditMenu = {
@@ -156,7 +156,7 @@ fun MainContent(){
                     )
                 } ?: run {
                     AddModifyRestaurantScreen(
-                        controller = AddRestaurantController(adminUseCases),
+                        controller = AddModifyRestaurantController(adminUseCases),
                         onBack = navigation::pop,
                         onClickEditMenu = {
                             navigation.push(Screen.MenuScreen(it))
