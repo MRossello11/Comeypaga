@@ -8,12 +8,18 @@ import feature_admin.domain.repository.AdminRepository
 class AddPlate(
     private val adminRepository: AdminRepository
 ) {
-    suspend operator fun invoke(plateRequest: PlateRequest, callback: (response: BaseResponse) -> Unit){
+    suspend operator fun invoke(
+        plateRequest: PlateRequest,
+        callback: (response: BaseResponse) -> Unit,
+        newPlate: Boolean
+    ){
         // verify field
         if (plateRequest.plateName?.isEmpty() == true){
             throw InvalidPlateRequest("Plate name cannot be empty")
         }
-        plateRequest.price?.let {
+
+        val price = plateRequest.price?.toFloatOrNull()
+        price?.let {
             if (it < 0){
                 throw InvalidPlateRequest("Invalid price")
             }
@@ -25,6 +31,10 @@ class AddPlate(
             throw InvalidPlateRequest("Plate type cannot be empty")
         }
 
-        adminRepository.putPlate(plateRequest, callback)
+        if (newPlate){
+            adminRepository.putPlate(plateRequest, callback)
+        } else {
+            adminRepository.postPlate(plateRequest, callback)
+        }
     }
 }

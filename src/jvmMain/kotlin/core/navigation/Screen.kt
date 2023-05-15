@@ -2,6 +2,7 @@ package core.navigation
 
 import com.arkivanov.essenty.parcelable.Parcelable
 import com.arkivanov.essenty.parcelable.Parcelize
+import core.model.Plate
 import core.model.Restaurant
 import feature_users.domain.model.User
 
@@ -22,4 +23,6 @@ sealed class Screen: Parcelable {
     data class AddModifyRestaurant(val restaurant: Restaurant?): Screen()
     @Parcelize
     data class MenuScreen(val restaurant: Restaurant): Screen()
+    @Parcelize
+    data class AddModifyPlateScreen(val restaurant: Restaurant?, val plate: Plate?): Screen()
 }

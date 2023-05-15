@@ -9,12 +9,16 @@ import com.arkivanov.decompose.router.stack.StackNavigation
 import com.arkivanov.decompose.router.stack.pop
 import com.arkivanov.decompose.router.stack.push
 import core.Constants
+import core.model.Plate
+import core.model.Restaurant
 import core.navigation.ChildStack
 import core.navigation.Screen
 import core.service.createRetrofit
 import feature_admin.data.AdminRepositoryImpl
 import feature_admin.data.data_source.AdminDataSource
 import feature_admin.domain.use_cases.*
+import feature_admin.presentation.add_modify_plate.AddModifyPlateController
+import feature_admin.presentation.add_modify_plate.AddModifyPlateScreen
 import feature_admin.presentation.add_modify_restaurant.AddModifyRestaurantScreen
 import feature_admin.presentation.add_modify_restaurant.AddRestaurantController
 import feature_admin.presentation.menu.MenuController
@@ -169,9 +173,38 @@ fun MainContent(){
                     restaurant = screen.restaurant,
                     controller = controller,
                     onBack = navigation::pop,
-                    onClickAddPlate = { /* TODO: navigate to add plate screen */},
-                    onClickPlate = { /* TODO: navigate to modify plate screen */ }
+                    onClickAddPlate = {
+                        navigation.push(Screen.AddModifyPlateScreen(it, null))
+                    },
+                    onClickPlate = { restaurant: Restaurant, plate: Plate ->
+                        navigation.push(Screen.AddModifyPlateScreen(restaurant, plate))
+                    }
                 )
+            }
+            is Screen.AddModifyPlateScreen -> {
+                val addModifyPlateController = AddModifyPlateController(
+                    adminUseCases = adminUseCases
+                )
+
+                screen.restaurant?.let { restaurant ->
+                    screen.plate?.let { plate ->
+                        AddModifyPlateScreen(
+                            controller = addModifyPlateController,
+                            restaurant = restaurant,
+                            plate = plate,
+                            onBack = navigation::pop,
+                            newPlate = false
+                        )
+                    } ?: run {
+                        AddModifyPlateScreen(
+                            controller = addModifyPlateController,
+                            restaurant = restaurant,
+                            onBack = navigation::pop,
+                            newPlate = true
+                        )
+                    }
+                }
+
             }
         }
     }

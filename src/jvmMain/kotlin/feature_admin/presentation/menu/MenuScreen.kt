@@ -33,8 +33,8 @@ fun MenuScreen(
     restaurant: Restaurant,
     controller: MenuController,
     onBack: () -> Unit,
-    onClickPlate: (Plate) -> Unit,
-    onClickAddPlate: (String) -> Unit
+    onClickPlate: (Restaurant, Plate) -> Unit,
+    onClickAddPlate: (Restaurant) -> Unit
 ){
 
     // dialog states
@@ -99,7 +99,7 @@ fun MenuScreen(
         floatingActionButton = {
             FloatingActionButton(
                 modifier = Modifier,
-                onClick = { restaurant._id?.let { onClickAddPlate(it) } },
+                onClick = { onClickAddPlate(restaurant) },
                 shape = CircleShape,
                 containerColor = ComeypagaStyles.primaryColorGreen,
                 contentColor = Color.White
@@ -131,7 +131,7 @@ fun MenuScreen(
                             .fillMaxWidth()
                             .clickable {
                                 controller.onEvent(MenuEvent.SetPlate(plate))
-                                onClickPlate(plate)
+                                onClickPlate(restaurant, plate)
                             },
                         plate = plate,
                         onDeletePlate = {
