@@ -10,11 +10,12 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
 class AddModifyRestaurantController(
-    private val adminUseCases: AdminUseCases
+    private val adminUseCases: AdminUseCases,
+    actualRestaurant: Restaurant = Restaurant("","","","","","","",Address("",""),"", listOf()),
 ){
 
     private val _state = MutableStateFlow(AddModifyRestaurantState(
-        Restaurant("","","","","","","",Address("",""),"", listOf()),
+        actualRestaurant
     ))
     val state = _state.asStateFlow()
 
@@ -38,11 +39,18 @@ class AddModifyRestaurantController(
                         // create restaurant
                         adminUseCases.addRestaurant(
                             restaurant = _state.value.restaurant,
-                            callback = {
+                            callback = { response, restaurant ->
                                 _state.update { state ->
                                     state.copy(
-                                        addModifyRestaurantResponse = it
+                                        addModifyRestaurantResponse = response
                                     )
+                                }
+                                restaurant?.let {
+                                    _state.update { state ->
+                                        state.copy(
+                                            restaurant = it
+                                        )
+                                    }
                                 }
                             },
                             newRestaurant = true
@@ -67,11 +75,18 @@ class AddModifyRestaurantController(
                         // create restaurant
                         adminUseCases.addRestaurant(
                             restaurant = _state.value.restaurant,
-                            callback = {
+                            callback = { response, restaurant ->
                                 _state.update { state ->
                                     state.copy(
-                                        addModifyRestaurantResponse = it
+                                        addModifyRestaurantResponse = response,
                                     )
+                                }
+                                restaurant?.let {
+                                    _state.update { state ->
+                                        state.copy(
+                                            restaurant = it
+                                        )
+                                    }
                                 }
                             },
                             newRestaurant = false

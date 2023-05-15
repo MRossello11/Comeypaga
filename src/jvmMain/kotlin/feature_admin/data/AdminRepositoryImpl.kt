@@ -44,16 +44,40 @@ class AdminRepositoryImpl(
         }
     }
 
-    override suspend fun postRestaurant(restaurant: Restaurant, callback: (response: BaseResponse) -> Unit) {
+    override suspend fun postRestaurant(restaurant: Restaurant, callback: (response: BaseResponse, newRestaurant: Restaurant?) -> Unit) {
         val response = adminDataSource.postRestaurant(restaurant)
 
-        handleBaseResponse(response, callback)
+        if (response.code() in 200..299) {
+            response.body()?.let {
+                callback(BaseResponse(response.code(), response.message()), response.body()?.restaurant)
+            } ?: run {
+                callback(BaseResponse(response.code(), "An error occurred"), null)
+            }
+        } else if(response.code() == 401 || response.code() == 403){
+            callback(BaseResponse(response.code(), "You are not authorized"), null)
+        }else {
+            val errorBody = response.errorBody()?.string()
+            val errorResponse = Gson().fromJson(errorBody, ErrorResponse::class.java)
+            callback(BaseResponse(response.code(), errorResponse.message ?: "An error occurred"), null)
+        }
     }
 
-    override suspend fun putRestaurant(restaurant: Restaurant, callback: (response: BaseResponse) -> Unit) {
+    override suspend fun putRestaurant(restaurant: Restaurant, callback: (response: BaseResponse, newRestaurant: Restaurant?) -> Unit) {
         val response = adminDataSource.putRestaurant(restaurant)
 
-        handleBaseResponse(response, callback)
+        if (response.code() in 200..299) {
+            response.body()?.let {
+                callback(BaseResponse(response.code(), response.message()), response.body()?.restaurant)
+            } ?: run {
+                callback(BaseResponse(response.code(), "An error occurred"), null)
+            }
+        } else if(response.code() == 401 || response.code() == 403){
+            callback(BaseResponse(response.code(), "You are not authorized"), null)
+        }else {
+            val errorBody = response.errorBody()?.string()
+            val errorResponse = Gson().fromJson(errorBody, ErrorResponse::class.java)
+            callback(BaseResponse(response.code(), errorResponse.message ?: "An error occurred"), null)
+        }
     }
 
     override suspend fun deleteRestaurant(restaurantId: String, callback: (response: BaseResponse) -> Unit) {

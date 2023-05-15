@@ -80,6 +80,8 @@ fun MainContent(){
         deletePlate = DeletePlate(adminRepository),
     )
 
+    var actualRestaurant: Restaurant
+
     // navigation
     val navigation = remember { StackNavigation<Screen>() }
     ChildStack(
@@ -146,11 +148,12 @@ fun MainContent(){
             }
             is Screen.AddModifyRestaurant -> {
                 screen.restaurant?.let { restaurant ->
+                    actualRestaurant = restaurant
                     AddModifyRestaurantScreen(
-                        controller = AddModifyRestaurantController(adminUseCases),
+                        controller = AddModifyRestaurantController(adminUseCases, actualRestaurant),
                         restaurant = restaurant,
                         onBack = navigation::pop,
-                        onClickEditMenu = {
+                        onNavigateToMenu = {
                             navigation.push(Screen.MenuScreen(it))
                         },
                         newRestaurant = screen.restaurant._id?.let { false } ?: true
@@ -159,7 +162,7 @@ fun MainContent(){
                     AddModifyRestaurantScreen(
                         controller = AddModifyRestaurantController(adminUseCases),
                         onBack = navigation::pop,
-                        onClickEditMenu = {
+                        onNavigateToMenu = {
                             navigation.push(Screen.MenuScreen(it))
                         },
                         newRestaurant = true

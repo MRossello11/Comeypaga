@@ -23,7 +23,7 @@ fun AddModifyRestaurantScreen(
     controller: AddModifyRestaurantController,
     restaurant: Restaurant = Restaurant("","","","","","","",Address("",""),"", listOf()),
     onBack: () -> Unit,
-    onClickEditMenu: (Restaurant) -> Unit,
+    onNavigateToMenu: (Restaurant) -> Unit,
     newRestaurant: Boolean = false
 ) {
     val viewState = controller.state.collectAsState()
@@ -41,8 +41,13 @@ fun AddModifyRestaurantScreen(
         controller.eventFlow.collectLatest { event ->
             when(event){
                 AddModifyRestaurantController.UiEvent.RestaurantCreated -> {
-                    errorDialogMessage = viewState.value.addModifyRestaurantResponse.message ?: "Restaurant created!"
-                    showDialog = true
+                    if (state.shouldNavigateToMenu){
+                        onNavigateToMenu(viewState.value.restaurant)
+                    } else {
+                        errorDialogMessage =
+                            viewState.value.addModifyRestaurantResponse.message ?: "Restaurant created!"
+                        showDialog = true
+                    }
                 }
                 is AddModifyRestaurantController.UiEvent.ShowDialog -> {
                     errorDialogMessage = event.message
@@ -238,9 +243,15 @@ fun AddModifyRestaurantScreen(
                     .padding(horizontal = 10.dp),
                 content = "Edit menu",
                 onClick = {
-                    onClickEditMenu(
-                        restaurant
+                    state = state.copy(
+                        shouldNavigateToMenu = true
                     )
+                    // save modifications before going to the menu
+                    if (newRestaurant) {
+                        controller.onEvent(AddModifyRestaurantEvent.CreateRestaurant)
+                    } else {
+                        controller.onEvent(AddModifyRestaurantEvent.ModifyRestaurant)
+                    }
                 }
             )
 
@@ -264,6 +275,9 @@ fun AddModifyRestaurantScreen(
                         .padding(horizontal = 10.dp),
                     content = "Save",
                     onClick = {
+                        state = state.copy(
+                            shouldNavigateToMenu = false
+                        )
                         if (newRestaurant) {
                             controller.onEvent(AddModifyRestaurantEvent.CreateRestaurant)
                         } else {

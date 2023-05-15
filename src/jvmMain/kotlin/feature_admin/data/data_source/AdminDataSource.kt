@@ -21,12 +21,12 @@ interface AdminDataSource {
     @POST("${WebService.BASE_URL}${WebService.RESTAURANTS}")
     suspend fun postRestaurant(
         @Body restaurant: Restaurant
-    ): Response<BaseResponse>
+    ): Response<RestaurantWrapper>
 
     @PUT("${WebService.BASE_URL}${WebService.RESTAURANTS}")
     suspend fun putRestaurant(
         @Body restaurant: Restaurant
-    ): Response<BaseResponse>
+    ): Response<RestaurantWrapper>
 
     @DELETE("${WebService.BASE_URL}${WebService.RESTAURANTS}/{id}")
     suspend fun deleteRestaurant(

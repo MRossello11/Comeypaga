@@ -9,7 +9,7 @@ class AddRestaurant(
     private val adminRepository: AdminRepository
 ){
     suspend operator fun invoke(
-        restaurant: Restaurant, callback: (response: BaseResponse) -> Unit, newRestaurant: Boolean
+        restaurant: Restaurant, callback: (response: BaseResponse, newRestaurant: Restaurant?) -> Unit, newRestaurant: Boolean
     ){
         // verify fields
         if (restaurant.name.isEmpty()){

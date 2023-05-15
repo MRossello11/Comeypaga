@@ -5,5 +5,6 @@ import core.model.Restaurant
 
 data class AddModifyRestaurantState(
     val restaurant: Restaurant,
+    val shouldNavigateToMenu: Boolean = false,
     val addModifyRestaurantResponse: BaseResponse = BaseResponse()
 )
