@@ -136,7 +136,8 @@ fun MenuScreen(
                         plate = plate,
                         onDeletePlate = {
                             controller.onEvent(MenuEvent.DeletePlate(it))
-                        }
+                        },
+                        editMode = true
                     )
                 }
             }

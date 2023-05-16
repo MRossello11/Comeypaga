@@ -1,5 +1,6 @@
 package core.components.restaurants
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.padding
@@ -22,7 +23,8 @@ fun PlateListItem(
     onDeletePlate: (Plate) -> Unit
 ) {
     Column(
-        modifier = modifier.defaultMinSize(minHeight = 20.dp)
+        modifier = modifier.defaultMinSize(minHeight = 20.dp),
+        verticalArrangement = Arrangement.Center
     ) {
         // name and price
         Text(
@@ -49,9 +51,5 @@ fun PlateListItem(
                 )
             }
         }
-        // todo
-//        else {
-//
-//        }
     }
 }

@@ -21,6 +21,69 @@ class MenuController(
     val eventFlow = _eventFlow.asSharedFlow()
 
     init{
+        getRestaurant()
+    }
+
+    fun onEvent(event: MenuEvent){
+        when(event){
+            is DeletePlate -> {
+                _state.update { state ->
+                    state.copy(
+                        actualPlate = event.plate
+                    )
+                }
+                CoroutineScope(Dispatchers.IO).launch {
+                    _eventFlow.emit(UiEvent.ShowDeletePlateDialogConfirmation("Confirm deletion of '${_state.value.actualPlate!!.plateName}'"))
+                }
+            }
+            is DeletionConfirmed -> {
+                // delete plate
+                CoroutineScope(Dispatchers.IO).launch{
+                    adminUseCases.deletePlate(
+                        callback = { response ->
+                            _state.update { state ->
+                                state.copy(
+                                    response = response
+                                )
+                            }
+                        },
+                        plateRequest = PlateRequest(
+                            restaurantId = _state.value.restaurant?._id!!,
+                            plateId = _state.value.actualPlate?._id!!
+                        )
+                    )
+
+                    getRestaurant()
+
+                    if (_state.value.response.errorCode in 200..299){
+                        _eventFlow.emit(UiEvent.ShowDialog("Plate deleted"))
+                    } else {
+                        _eventFlow.emit(UiEvent.ShowDialog("Error deleting plate"))
+                    }
+                }
+            }
+
+            is SetPlates -> {
+                _state.update { state ->
+                    state.copy(
+                        restaurant = state.restaurant?.copy(
+                            menu = event.plates
+                        )
+                    )
+                }
+            }
+
+            is SetPlate -> {
+                _state.update { state ->
+                    state.copy(
+                        actualPlate = event.plate
+                    )
+                }
+            }
+        }
+    }
+
+    private fun getRestaurant() {
         _state.update { state ->
             state.copy(
                 restaurant = restaurant
@@ -42,71 +105,6 @@ class MenuController(
                 )
             } catch (ir: InvalidRestaurant){
                 _eventFlow.emit(UiEvent.ShowDialog(ir.message ?: "An error occurred"))
-            }
-        }
-    }
-
-    fun onEvent(event: MenuEvent){
-        when(event){
-            is DeletePlate -> {
-                _state.update { state ->
-                    state.copy(
-                        actualPlate = event.plate
-                    )
-                }
-                CoroutineScope(Dispatchers.IO).launch {
-                    _eventFlow.emit(UiEvent.ShowDeletePlateDialogConfirmation("Confirm deletion of ${_state.value.actualPlate!!.plateName}"))
-                }
-            }
-            is DeletionConfirmed -> {
-                _state.update { state ->
-                    val newMenu = state.restaurant?.menu?.toMutableList() ?: mutableListOf()
-
-                    newMenu.remove(state.actualPlate)
-
-                    state.copy(
-                        actualPlate = null,
-                        restaurant = state.restaurant?.copy(
-                            menu = newMenu
-                        )
-                    )
-                }
-
-                // delete plate
-                CoroutineScope(Dispatchers.IO).launch{
-                    adminUseCases.deletePlate(
-                        callback = { response ->
-                            _state.update { state ->
-                                state.copy(
-                                    response = response
-                                )
-                            }
-                        },
-                        plateRequest = PlateRequest(
-                            restaurantId = _state.value.restaurant?._id!!,
-                            plateId = _state.value.actualPlate?._id!!
-                        )
-                    )
-
-                }
-            }
-
-            is SetPlates -> {
-                _state.update { state ->
-                    state.copy(
-                        restaurant = state.restaurant?.copy(
-                            menu = event.plates
-                        )
-                    )
-                }
-            }
-
-            is SetPlate -> {
-                _state.update { state ->
-                    state.copy(
-                        actualPlate = event.plate
-                    )
-                }
             }
         }
     }

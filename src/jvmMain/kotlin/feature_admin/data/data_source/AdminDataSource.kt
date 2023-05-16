@@ -43,7 +43,7 @@ interface AdminDataSource {
         @Body plateRequest: PlateRequest
     ): Response<BaseResponse>
 
-    @DELETE("${WebService.BASE_URL}${WebService.RESTAURANTS}${WebService.MENU}")
+    @POST("${WebService.BASE_URL}${WebService.RESTAURANTS}${WebService.MENU}/deletePlate")
     suspend fun deletePlate(
         @Body plateRequest: PlateRequest
     ): Response<BaseResponse>
