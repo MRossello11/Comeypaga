@@ -7,7 +7,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
@@ -31,7 +30,6 @@ fun AddModifyRestaurantScreen(
     newRestaurant: Boolean = false
 ) {
     val viewState = controller.state.collectAsState()
-    val selectedPicture = remember { mutableStateOf<ImageBitmap?>(null) }
     var state by remember { mutableStateOf(
         AddModifyRestaurantState(
             restaurant = restaurant
@@ -91,7 +89,7 @@ fun AddModifyRestaurantScreen(
         )
 
         // image
-        selectedPicture.value?.let {
+        state.restaurant.imageBitmap?.let {
             Image(
                 modifier = Modifier.fillMaxWidth().defaultMinSize(minHeight = 10.dp),
                 bitmap = it,
@@ -101,14 +99,14 @@ fun AddModifyRestaurantScreen(
         }
 
         Button(onClick = {
-            Utils.pickPicture(selectedPicture)
-            // todo
-//            state = state.copy(
-//                restaurant = state.restaurant.copy(
-//                    picture =
-//                )
-//            )
-//            controller.onEvent(AddModifyRestaurantEvent.FieldEntered(restaurant = state.restaurant))
+            val bitmap = Utils.pickPicture()
+            state = state.copy(
+                restaurant = state.restaurant.copy(
+                    imageBitmap = bitmap,
+                    picture = Utils.imageBitmapToBase64(bitmap)
+                )
+            )
+            controller.onEvent(AddModifyRestaurantEvent.FieldEntered(restaurant = state.restaurant))
         }) {
             androidx.compose.material.Text("Select Image")
         }

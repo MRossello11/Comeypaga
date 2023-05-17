@@ -1,5 +1,7 @@
 package core.model
 
+import androidx.compose.ui.graphics.ImageBitmap
+
 data class Restaurant(
     val _id: String? = null,
     val name: String,
@@ -9,8 +11,10 @@ data class Restaurant(
     val phone: String,
     val email: String,
     val address: Address,
-    val picture: String? = null,
-    val menu: List<Plate>?
+    val picture: String? = null, // base64 string image
+    val menu: List<Plate>?,
+    @Transient
+    val imageBitmap: ImageBitmap? = null // ImageBitmap of the image
 )
 
 data class RestaurantsWrapper(

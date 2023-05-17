@@ -4,9 +4,6 @@ import core.model.BaseResponse
 import core.model.InvalidRestaurant
 import core.model.Restaurant
 import feature_admin.domain.repository.AdminRepository
-import java.io.File
-import java.nio.file.Files
-import java.util.*
 
 class AddRestaurant(
     private val adminRepository: AdminRepository
@@ -40,11 +37,8 @@ class AddRestaurant(
         restaurant.picture?.let {
             if (it.isEmpty()){
                 throw InvalidRestaurant("You need to add a picture")
-            } else {
-                // encode image
-                val imageFile = File(restaurant.picture)
-                val imageBytes = Files.readAllBytes(imageFile.toPath())
-                picture = Base64.getEncoder().encodeToString(imageBytes)
+            } else{
+                picture = it
             }
         } ?: kotlin.run {
             throw InvalidRestaurant("You need to add a picture")
