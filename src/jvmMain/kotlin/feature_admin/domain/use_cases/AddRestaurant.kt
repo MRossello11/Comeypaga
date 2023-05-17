@@ -4,6 +4,9 @@ import core.model.BaseResponse
 import core.model.InvalidRestaurant
 import core.model.Restaurant
 import feature_admin.domain.repository.AdminRepository
+import java.io.File
+import java.nio.file.Files
+import java.util.*
 
 class AddRestaurant(
     private val adminRepository: AdminRepository
@@ -33,10 +36,20 @@ class AddRestaurant(
         if (restaurant.address.town.isEmpty()){
             throw InvalidRestaurant("Town cannot be empty")
         }
-        // todo
-        /*if (restaurant.picture.isEmpty()){
+        var picture = ""
+        restaurant.picture?.let {
+            if (it.isEmpty()){
+                throw InvalidRestaurant("You need to add a picture")
+            } else {
+                // encode image
+                val imageFile = File(restaurant.picture)
+                val imageBytes = Files.readAllBytes(imageFile.toPath())
+                picture = Base64.getEncoder().encodeToString(imageBytes)
+            }
+        } ?: kotlin.run {
             throw InvalidRestaurant("You need to add a picture")
-        }*/
+        }
+        // todo
         /*if (restaurant.menu.isEmpty()){
             throw InvalidRestaurant("Menu cannot be empty")
         }*/
@@ -59,9 +72,13 @@ class AddRestaurant(
         if (stars !in 0f..5f) throw InvalidRestaurant("Invalid review stars")
 
         if (newRestaurant){
-            adminRepository.putRestaurant(restaurant, callback)
+            adminRepository.putRestaurant(restaurant.copy(
+                picture = picture
+            ), callback)
         } else {
-            adminRepository.postRestaurant(restaurant, callback)
+            adminRepository.postRestaurant(restaurant.copy(
+                picture = picture
+            ), callback)
         }
     }
 }

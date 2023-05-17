@@ -1,15 +1,19 @@
 package feature_admin.presentation.add_modify_restaurant
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.Text
+import androidx.compose.material.Button
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import core.ComeypagaStyles.spacerModifier
 import core.ComeypagaStyles.standardDialogDimension
+import core.Utils
 import core.components.AppHeader
 import core.components.LabeledTextField
 import core.components.PrimaryButton
@@ -27,6 +31,7 @@ fun AddModifyRestaurantScreen(
     newRestaurant: Boolean = false
 ) {
     val viewState = controller.state.collectAsState()
+    val selectedPicture = remember { mutableStateOf<ImageBitmap?>(null) }
     var state by remember { mutableStateOf(
         AddModifyRestaurantState(
             restaurant = restaurant
@@ -85,11 +90,27 @@ fun AddModifyRestaurantScreen(
             onClickBack = onBack
         )
 
-        // todo: image
-        Box(
-            modifier = Modifier.fillMaxWidth().height(120.dp)
-        ) {
-            Text(text = "(IMAGE)")
+        // image
+        selectedPicture.value?.let {
+            Image(
+                modifier = Modifier.fillMaxWidth().defaultMinSize(minHeight = 10.dp),
+                bitmap = it,
+                contentDescription = "Restaurant image",
+                contentScale = ContentScale.Fit
+            )
+        }
+
+        Button(onClick = {
+            Utils.pickPicture(selectedPicture)
+            // todo
+//            state = state.copy(
+//                restaurant = state.restaurant.copy(
+//                    picture =
+//                )
+//            )
+//            controller.onEvent(AddModifyRestaurantEvent.FieldEntered(restaurant = state.restaurant))
+        }) {
+            androidx.compose.material.Text("Select Image")
         }
 
         // form
