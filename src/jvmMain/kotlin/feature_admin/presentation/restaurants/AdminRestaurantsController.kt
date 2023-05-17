@@ -1,10 +1,13 @@
 package feature_admin.presentation.restaurants
 
+import androidx.compose.ui.graphics.toComposeImageBitmap
 import feature_admin.domain.use_cases.AdminUseCases
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import java.util.*
+import javax.imageio.ImageIO
 
 class AdminRestaurantsController(
     private val adminUseCases: AdminUseCases
@@ -72,6 +75,23 @@ class AdminRestaurantsController(
             try {
                 adminUseCases.getRestaurants(
                     callback = { response, restaurants ->
+                        try {
+                            restaurants.forEachIndexed { index, restaurant ->
+                                restaurant.picture?.let {
+                                    if (it.isNotEmpty()) {
+                                        // decode picture
+                                        val decodedBytes = Base64.getDecoder().decode(it)
+                                        val bufferedImage = ImageIO.read(decodedBytes.inputStream())
+
+                                        // set image bitmap
+                                        restaurants[index] = restaurant.copy(
+                                            imageBitmap = bufferedImage.toComposeImageBitmap(),
+                                        )
+                                    }
+                                }
+                            }
+                        } catch (_: Exception){}
+
                         _state.update { state ->
                             state.copy(
                                 response = response,

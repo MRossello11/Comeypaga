@@ -1,6 +1,9 @@
 package core.components.restaurants
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Call
 import androidx.compose.material.icons.filled.Delete
@@ -12,7 +15,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
 import core.model.Plate
 import core.model.Restaurant
 
@@ -35,16 +37,10 @@ fun RestaurantCard(
             modifier = Modifier
         ){
             // image
-//            Image(
-//            )
-            // todo: temp until image
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(70.dp)
-            ) {
-                Text(
-                    text = "(Imagen)"
+            restaurant.imageBitmap?.let {
+                Image(
+                    bitmap = it,
+                    contentDescription = "Restaurant picture"
                 )
             }
 
