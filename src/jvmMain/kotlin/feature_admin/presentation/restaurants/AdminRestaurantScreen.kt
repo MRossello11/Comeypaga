@@ -71,7 +71,6 @@ fun AdminRestaurantScreen(
             if (result.isNotEmpty()){
                 // found restaurants
                 restaurants.value = it
-                println("Restaurants ${restaurants.value}")
             } else {
                 // didn't find restaurants (response is ok, but empty)
                 showDialog = true
