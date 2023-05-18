@@ -21,10 +21,9 @@ import feature_admin.presentation.add_modify_plate.AddModifyPlateController
 import feature_admin.presentation.add_modify_plate.AddModifyPlateScreen
 import feature_admin.presentation.add_modify_restaurant.AddModifyRestaurantController
 import feature_admin.presentation.add_modify_restaurant.AddModifyRestaurantScreen
+import feature_admin.presentation.main.AdminMainScreen
 import feature_admin.presentation.menu.MenuController
 import feature_admin.presentation.menu.MenuScreen
-import feature_admin.presentation.restaurants.AdminRestaurantScreen
-import feature_admin.presentation.restaurants.AdminRestaurantsController
 import feature_users.data.UserRepositoryImpl
 import feature_users.data.data_source.UserDataSource
 import feature_users.domain.use_cases.LoginUseCase
@@ -133,7 +132,17 @@ fun MainContent(){
                 println("Rider page")
             }
             is Screen.AdminMain ->{
-
+                AdminMainScreen(
+                    adminUseCases = adminUseCases,
+                    onBack = navigation::pop,
+                    onAddRestaurant = {
+                        navigation.push(Screen.AddModifyRestaurant(null))
+                    },
+                    onClickRestaurant = {
+                        navigation.push(Screen.AddModifyRestaurant(it))
+                    }
+                )
+/* todo: temp
                 val adminRestaurantsController = AdminRestaurantsController(adminUseCases)
                 AdminRestaurantScreen(
                     controller = adminRestaurantsController,
@@ -144,7 +153,7 @@ fun MainContent(){
                     onClickRestaurant = {
                         navigation.push(Screen.AddModifyRestaurant(it))
                     }
-                )
+                )*/
             }
             is Screen.AddModifyRestaurant -> {
                 screen.restaurant?.let { restaurant ->
