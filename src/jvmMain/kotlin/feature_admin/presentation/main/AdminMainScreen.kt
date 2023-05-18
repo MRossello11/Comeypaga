@@ -16,6 +16,8 @@ import core.ComeypagaStyles
 import core.components.AppHeader
 import core.model.Restaurant
 import feature_admin.domain.use_cases.AdminUseCases
+import feature_admin.presentation.restaurants.AdminRestaurantScreen
+import feature_admin.presentation.restaurants.AdminRestaurantsController
 
 @Composable
 fun AdminMainScreen(
@@ -64,9 +66,10 @@ fun AdminMainScreen(
         when (currentTab.value) {
             0 -> {
                 // Content for the "Restaurants" tab
-                Text(
-                    modifier = Modifier.fillMaxSize(),
-                    text = "Restaurants content"
+                AdminRestaurantScreen(
+                    controller = AdminRestaurantsController(adminUseCases),
+                    onAddRestaurant = onAddRestaurant,
+                    onClickRestaurant = onClickRestaurant
                 )
             }
 

@@ -21,7 +21,6 @@ import core.ComeypagaStyles
 import core.ComeypagaStyles.spacerModifier
 import core.ComeypagaStyles.standardDialogDimension
 import core.ComeypagaStyles.standardTwoOptionsDialogDimension
-import core.components.AppHeader
 import core.components.dialogs.OneOptionDialog
 import core.components.dialogs.TwoOptionDialog
 import core.components.restaurants.RestaurantCard
@@ -32,7 +31,6 @@ import kotlinx.coroutines.flow.collectLatest
 @Composable
 fun AdminRestaurantScreen(
     controller: AdminRestaurantsController,
-    onBack: () -> Unit,
     onAddRestaurant: () -> Unit,
     onClickRestaurant: (Restaurant) -> Unit
 ){
@@ -137,11 +135,6 @@ fun AdminRestaurantScreen(
         }
     ) {
         Column {
-            AppHeader(
-                title = "Restaurants temp",
-                onClickBack = onBack
-            )
-
             LazyVerticalGrid(
                 modifier = Modifier
                     .fillMaxSize()
