@@ -36,7 +36,7 @@ fun AdminRestaurantScreen(
     onAddRestaurant: () -> Unit,
     onClickRestaurant: (Restaurant) -> Unit
 ){
-    val viewState: AdminRestaurantsState by controller.state.collectAsState()
+    val restaurants = remember { mutableStateOf(listOf<Restaurant>()) }
 
     // dialog states
     var showDialog by remember { mutableStateOf(false) }
@@ -59,6 +59,28 @@ fun AdminRestaurantScreen(
                     errorDialogMessage = event.message
                 }
             }
+        }
+    }
+
+    // launched effect to get restaurants
+    LaunchedEffect(Unit){
+        val result = controller.getRestaurants()
+
+        // evaluate result
+        result?.let {
+            if (result.isNotEmpty()){
+                // found restaurants
+                restaurants.value = it
+                println("Restaurants ${restaurants.value}")
+            } else {
+                // didn't find restaurants (response is ok, but empty)
+                showDialog = true
+                errorDialogMessage = "No restaurants found"
+            }
+        } ?: run {
+            // there was an error
+            showDialog = true
+            errorDialogMessage = "Error getting restaurants"
         }
     }
 
@@ -124,10 +146,10 @@ fun AdminRestaurantScreen(
             LazyVerticalGrid(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(start = 15.dp, end = 5.dp, top = 10.dp),
+                    .padding(start = 5.dp, end = 5.dp, top = 10.dp),
                 columns = GridCells.Fixed(2)
             ) {
-                items(viewState.restaurants) { restaurant ->
+                items(restaurants.value) { restaurant ->
                     Spacer(modifier = spacerModifier)
                     RestaurantCard(
                         modifier = Modifier
