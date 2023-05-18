@@ -1,5 +1,8 @@
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
 import com.arkivanov.decompose.ExperimentalDecomposeApi
 import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.fade
 import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.plus
@@ -24,6 +27,8 @@ import feature_admin.presentation.add_modify_restaurant.AddModifyRestaurantScree
 import feature_admin.presentation.main.AdminMainScreen
 import feature_admin.presentation.menu.MenuController
 import feature_admin.presentation.menu.MenuScreen
+import feature_admin.presentation.restaurants.AdminRestaurantScreen
+import feature_admin.presentation.restaurants.AdminRestaurantsController
 import feature_users.data.UserRepositoryImpl
 import feature_users.data.data_source.UserDataSource
 import feature_users.domain.use_cases.LoginUseCase
@@ -134,30 +139,32 @@ fun MainContent(){
             is Screen.RiderMain -> {
                 println("Rider page")
             }
+
             is Screen.AdminMain ->{
                 AdminMainScreen(
-                    adminUseCases = adminUseCases,
                     onBack = navigation::pop,
-                    onAddRestaurant = {
-                        navigation.push(Screen.AddModifyRestaurant(null))
+                    restaurantsContent = {
+                        val adminRestaurantsController = AdminRestaurantsController(adminUseCases)
+                        AdminRestaurantScreen(
+                            controller = adminRestaurantsController,
+                            onAddRestaurant = {
+                                navigation.push(Screen.AddModifyRestaurant(null))
+                            },
+                            onClickRestaurant = {
+                                navigation.push(Screen.AddModifyRestaurant(it))
+                            }
+                        )
                     },
-                    onClickRestaurant = {
-                        navigation.push(Screen.AddModifyRestaurant(it))
+                    ridersContent = {
+                        // todo: temp
+                        Text(
+                            modifier = Modifier.fillMaxSize(),
+                            text = "Riders content"
+                        )
                     }
                 )
-/* todo: temp
-                val adminRestaurantsController = AdminRestaurantsController(adminUseCases)
-                AdminRestaurantScreen(
-                    controller = adminRestaurantsController,
-                    onBack = navigation::pop,
-                    onAddRestaurant = {
-                        navigation.push(Screen.AddModifyRestaurant(null))
-                    },
-                    onClickRestaurant = {
-                        navigation.push(Screen.AddModifyRestaurant(it))
-                    }
-                )*/
             }
+
             is Screen.AddModifyRestaurant -> {
                 screen.restaurant?.let { restaurant ->
                     actualRestaurant = restaurant
@@ -181,6 +188,7 @@ fun MainContent(){
                     )
                 }
             }
+
             is Screen.MenuScreen -> {
                 MenuScreen(
                     restaurant = screen.restaurant,
@@ -197,6 +205,7 @@ fun MainContent(){
                     }
                 )
             }
+
             is Screen.AddModifyPlateScreen -> {
                 val addModifyPlateController = AddModifyPlateController(
                     adminUseCases = adminUseCases
