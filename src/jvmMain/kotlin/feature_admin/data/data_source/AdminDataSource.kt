@@ -6,6 +6,8 @@ import core.model.Restaurant
 import core.model.RestaurantWrapper
 import core.model.RestaurantsWrapper
 import feature_admin.domain.model.PlateRequest
+import feature_users.domain.model.RiderList
+import feature_users.domain.model.UserResponse
 import retrofit2.Response
 import retrofit2.http.*
 
@@ -46,5 +48,18 @@ interface AdminDataSource {
     @POST("${WebService.BASE_URL}${WebService.RESTAURANTS}${WebService.MENU}/deletePlate")
     suspend fun deletePlate(
         @Body plateRequest: PlateRequest
+    ): Response<BaseResponse>
+
+    @GET("${WebService.BASE_URL}${WebService.USER}${WebService.RIDER}")
+    suspend fun getRiders(): Response<RiderList>
+
+    @POST("${WebService.BASE_URL}${WebService.USER}${WebService.RIDER}")
+    suspend fun postRider(
+        @Body rider: UserResponse
+    ): Response<BaseResponse>
+
+    @DELETE("${WebService.BASE_URL}${WebService.USER}${WebService.RIDER}/{id}")
+    suspend fun deleteRider(
+        @Path("id") _id: String
     ): Response<BaseResponse>
 }

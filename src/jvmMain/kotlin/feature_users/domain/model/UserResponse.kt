@@ -15,4 +15,8 @@ data class UserResponse(
     val role: String = Role.USER.toString()
 )
 
+data class RiderList(
+    val riders: List<UserResponse>
+)
+
 class InvalidUser(message: String): Exception(message)

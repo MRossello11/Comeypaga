@@ -8,6 +8,7 @@ import core.model.Restaurant
 import feature_admin.data.data_source.AdminDataSource
 import feature_admin.domain.model.PlateRequest
 import feature_admin.domain.repository.AdminRepository
+import feature_users.domain.model.UserResponse
 
 class AdminRepositoryImpl(
     private val adminDataSource: AdminDataSource
@@ -103,5 +104,33 @@ class AdminRepositoryImpl(
 
         handleBaseResponse(response, callback)
 
+    }
+
+    override suspend fun getRiders(callback: (response: BaseResponse, riders: List<UserResponse>) -> Unit) {
+        val response = adminDataSource.getRiders()
+
+        if (response.code() in 200..299){
+            response.body()?.let {
+                callback(BaseResponse(response.code(), response.message()), it.riders)
+            } ?: run{
+                callback(BaseResponse(response.code(), "An error occurred"), listOf())
+            }
+        } else {
+            val errorBody = response.errorBody()?.string()
+            val errorResponse = Gson().fromJson(errorBody, ErrorResponse::class.java)
+            callback(BaseResponse(response.code(), errorResponse.message ?: "An error occurred"), listOf())
+        }
+    }
+
+    override suspend fun postRider(rider: UserResponse, callback: (response: BaseResponse) -> Unit) {
+        val response = adminDataSource.postRider(rider)
+
+        handleBaseResponse(response, callback)
+    }
+
+    override suspend fun deleteRider(riderId: String, callback: (response: BaseResponse) -> Unit) {
+        val response = adminDataSource.deleteRider(riderId)
+
+        handleBaseResponse(response, callback)
     }
 }

@@ -44,15 +44,15 @@ fun MainContent(){
     val retrofit =
         createRetrofit(Constants.WebService.BASE_URL)
 
-    val repoImpl = UserRepositoryImpl(
+    val userRepository = UserRepositoryImpl(
         retrofit.create(
             UserDataSource::class.java)
     )
 
     val useCases = UserUseCases(
-        loginUseCase = LoginUseCase(repoImpl),
-        resetPassword = ResetPasswordUseCase(repoImpl),
-        registryUseCase = RegistryUseCase(repoImpl)
+        loginUseCase = LoginUseCase(userRepository),
+        resetPassword = ResetPasswordUseCase(userRepository),
+        registryUseCase = RegistryUseCase(userRepository)
     )
 
     val loginController =
@@ -63,7 +63,6 @@ fun MainContent(){
     val registryController = RegistryController(useCases)
 
     // admin
-    // todo: until rider screen is finished
     val adminRepository = AdminRepositoryImpl(
         retrofit.create(
             AdminDataSource::class.java)
@@ -77,6 +76,10 @@ fun MainContent(){
         addPlate = AddPlate(adminRepository),
         modifyPlate = ModifyPlate(adminRepository),
         deletePlate = DeletePlate(adminRepository),
+        getRiders = GetRiders(adminRepository),
+        addRider = AddRider(userRepository),
+        postRider = PostRider(adminRepository),
+        deleteRider = DeleteRider(adminRepository),
     )
 
     var actualRestaurant: Restaurant

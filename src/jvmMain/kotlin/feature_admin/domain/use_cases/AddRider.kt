@@ -1,25 +1,22 @@
-package feature_users.domain.use_cases
+package feature_admin.domain.use_cases
 
 import core.Utils
-import core.Utils.getDateFromUserResponse
 import core.model.BaseResponse
 import feature_users.domain.model.UserResponse
 import feature_users.domain.repository.UserRepository
 
-class RegistryUseCase(
+class AddRider(
     private val userRepository: UserRepository
 ) {
-
     suspend operator fun invoke(
-        userRegistryRequest: UserResponse,
-        callback: (response: BaseResponse) -> Unit
+        rider: UserResponse, callback: (response: BaseResponse) -> Unit
     ) {
         // verify request
-        Utils.verifyUser(userRegistryRequest)
-        val dateToSend: String = getDateFromUserResponse(userRegistryRequest)
+        Utils.verifyUser(rider)
+        val dateToSend: String = Utils.getDateFromUserResponse(rider)
 
         userRepository.registry(
-            userRegistryRequest.copy(
+            rider.copy(
                 birthDate = dateToSend
             ),
             callback

@@ -6,6 +6,7 @@ object Constants {
         const val USER = "/user"
         const val RESTAURANTS = "/restaurants"
         const val MENU = "/menu"
+        const val RIDER = "/rider"
     }
 
     const val DB_DATE ="yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
