@@ -4,6 +4,7 @@ import core.model.Address
 import java.util.*
 
 data class User(
+    val _id: String,
     val username: String,
 
     val firstname: String,

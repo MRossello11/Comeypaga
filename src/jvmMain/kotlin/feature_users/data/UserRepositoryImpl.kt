@@ -22,6 +22,7 @@ class UserRepositoryImpl(
                     val dateFormatter = SimpleDateFormat(DB_DATE)
 
                     val user = User(
+                        _id = it._id,
                         username = it.username,
                         firstname = it.firstname,
                         lastname = it.lastname,

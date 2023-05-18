@@ -106,17 +106,18 @@ class RegistryController(
 
                         userUseCases.registryUseCase(
                             userRegistryRequest = UserResponse(
-                            username = _registryState.value.username,
-                            firstname = _registryState.value.firstname,
-                            lastname = _registryState.value.lastname,
-                            birthDate = _registryState.value.birthDate,
-                            phone = _registryState.value.phone,
-                            email = _registryState.value.email,
-                            address = Address(
-                                street = _registryState.value.street,
-                                town = _registryState.value.town
-                            ),
-                            password = _registryState.value.password,
+                                _id = "",
+                                username = _registryState.value.username,
+                                firstname = _registryState.value.firstname,
+                                lastname = _registryState.value.lastname,
+                                birthDate = _registryState.value.birthDate,
+                                phone = _registryState.value.phone,
+                                email = _registryState.value.email,
+                                address = Address(
+                                    street = _registryState.value.street,
+                                    town = _registryState.value.town
+                                ),
+                                password = _registryState.value.password,
                             ),
                             callback = {
                                 _registryState.update { state ->
