@@ -102,7 +102,6 @@ class AddModifyPlateController (
                         )
                         // handle response
                         if (_state.value.response.errorCode in 200..299) {
-                            // todo?
                             val modifiedMenu = _state.value.restaurant?.menu?.toMutableList() ?: mutableListOf()
                             modifiedMenu.forEachIndexed { index, plate ->
                                 if (plate._id == _state.value.plate?._id){
@@ -136,7 +135,6 @@ class AddModifyPlateController (
         }
     }
 
-    // todo
     sealed class UiEvent{
         data class ShowDialog(val message: String): UiEvent()
 
