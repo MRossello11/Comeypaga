@@ -1,8 +1,5 @@
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Modifier
 import com.arkivanov.decompose.ExperimentalDecomposeApi
 import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.fade
 import com.arkivanov.decompose.extensions.compose.jetbrains.stack.animation.plus
@@ -29,6 +26,8 @@ import feature_admin.presentation.menu.MenuController
 import feature_admin.presentation.menu.MenuScreen
 import feature_admin.presentation.restaurants.AdminRestaurantScreen
 import feature_admin.presentation.restaurants.AdminRestaurantsController
+import feature_admin.presentation.riders.RidersController
+import feature_admin.presentation.riders.RidersScreen
 import feature_users.data.UserRepositoryImpl
 import feature_users.data.data_source.UserDataSource
 import feature_users.domain.use_cases.LoginUseCase
@@ -156,10 +155,9 @@ fun MainContent(){
                         )
                     },
                     ridersContent = {
-                        // todo: temp
-                        Text(
-                            modifier = Modifier.fillMaxSize(),
-                            text = "Riders content"
+                        val ridersController = RidersController(adminUseCases)
+                        RidersScreen(
+                            controller = ridersController
                         )
                     }
                 )
