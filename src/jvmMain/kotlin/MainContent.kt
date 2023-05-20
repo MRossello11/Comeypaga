@@ -30,6 +30,7 @@ import feature_admin.presentation.riders.RidersController
 import feature_admin.presentation.riders.RidersScreen
 import feature_users.data.UserRepositoryImpl
 import feature_users.data.data_source.UserDataSource
+import feature_users.domain.model.Role
 import feature_users.domain.use_cases.LoginUseCase
 import feature_users.domain.use_cases.RegistryUseCase
 import feature_users.domain.use_cases.ResetPasswordUseCase
@@ -53,18 +54,17 @@ fun MainContent(){
             UserDataSource::class.java)
     )
 
-    val useCases = UserUseCases(
+    val userUseCases = UserUseCases(
         loginUseCase = LoginUseCase(userRepository),
         resetPassword = ResetPasswordUseCase(userRepository),
         registryUseCase = RegistryUseCase(userRepository)
     )
 
     val loginController =
-        LoginController(useCases)
+        LoginController(userUseCases)
 
-    val resetPasswordController = ResetPasswordController(useCases)
+    val resetPasswordController = ResetPasswordController(userUseCases)
 
-    val registryController = RegistryController(useCases)
 
     // admin
     val adminRepository = AdminRepositoryImpl(
@@ -103,7 +103,7 @@ fun MainContent(){
                         navigation.push(Screen.UserResetPassword)
                     },
                     onRegistry = {
-                        navigation.push(Screen.Registry)
+                        navigation.push(Screen.Registry(Role.User))
                     },
                     onUserLogin = {
                         navigation.push(Screen.UserMain(it))
@@ -126,7 +126,7 @@ fun MainContent(){
 
             is Screen.Registry -> {
                 RegistryScreen(
-                    registryController = registryController,
+                    registryController = RegistryController(userUseCases, screen.userRole),
                     onBack = navigation::pop
                 )
             }
@@ -157,7 +157,10 @@ fun MainContent(){
                     ridersContent = {
                         val ridersController = RidersController(adminUseCases)
                         RidersScreen(
-                            controller = ridersController
+                            controller = ridersController,
+                            onAddRider = {
+                                navigation.push(Screen.Registry(Role.Rider))
+                            }
                         )
                     }
                 )

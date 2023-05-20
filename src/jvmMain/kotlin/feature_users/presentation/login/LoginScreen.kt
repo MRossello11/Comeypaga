@@ -60,15 +60,15 @@ fun LoginScreen(
                     // navigate to corresponding screen
                     viewState.user?.let { user ->
                         when(user.role){
-                            Role.USER -> {
+                            Role.User -> {
                                 onUserLogin(user)
                             }
 
-                            Role.RIDER -> {
+                            Role.Rider -> {
                                 onRiderLogin(user)
                             }
 
-                            Role.ADMIN-> {
+                            Role.Admin-> {
                                 onAdminLogin(user)
                             }
                         }

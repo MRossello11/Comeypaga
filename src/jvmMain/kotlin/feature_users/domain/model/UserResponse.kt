@@ -12,7 +12,7 @@ data class UserResponse(
     val email: String,
     val address: Address,
     val password: String,
-    val role: String = Role.USER.toString()
+    val role: String = Role.User.toString()
 )
 
 data class RiderList(

@@ -4,6 +4,7 @@ import com.arkivanov.essenty.parcelable.Parcelable
 import com.arkivanov.essenty.parcelable.Parcelize
 import core.model.Plate
 import core.model.Restaurant
+import feature_users.domain.model.Role
 import feature_users.domain.model.User
 
 sealed class Screen: Parcelable {
@@ -12,7 +13,7 @@ sealed class Screen: Parcelable {
     @Parcelize
     object UserResetPassword: Screen()
     @Parcelize
-    object Registry: Screen()
+    data class Registry(val userRole: Role): Screen()
     @Parcelize
     data class UserMain(val user: User): Screen()
     @Parcelize

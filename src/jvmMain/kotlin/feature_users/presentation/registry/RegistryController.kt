@@ -2,6 +2,7 @@ package feature_users.presentation.registry
 
 import core.model.Address
 import feature_users.domain.model.InvalidUser
+import feature_users.domain.model.Role
 import feature_users.domain.model.UserResponse
 import feature_users.domain.use_cases.UserUseCases
 import feature_users.presentation.registry.Field.*
@@ -11,7 +12,8 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
 class RegistryController(
-    private val userUseCases: UserUseCases
+    private val userUseCases: UserUseCases,
+    private val userRole: Role
 ) {
     private val _registryState = MutableStateFlow(RegistryState())
     val registryState = _registryState.asStateFlow()
@@ -118,6 +120,7 @@ class RegistryController(
                                     town = _registryState.value.town
                                 ),
                                 password = _registryState.value.password,
+                                role = userRole.toString()
                             ),
                             callback = {
                                 _registryState.update { state ->

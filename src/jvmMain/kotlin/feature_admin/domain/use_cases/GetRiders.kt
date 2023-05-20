@@ -35,7 +35,7 @@ class GetRiders(
                         email = it.email,
                         address = it.address,
                         password = it.password,
-                        role = Role.RIDER
+                        role = Role.Rider
                     )
                 )
             }

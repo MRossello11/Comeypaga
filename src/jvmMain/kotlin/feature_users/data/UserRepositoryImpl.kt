@@ -31,15 +31,15 @@ class UserRepositoryImpl(
                         email = it.email,
                         address = it.address,
                         password = it.password,
-                        role = when(Role.valueOf(it.role.uppercase())){
-                            Role.USER -> {
-                                Role.USER
+                        role = when(Role.valueOf(it.role)){
+                            Role.User -> {
+                                Role.User
                             }
-                            Role.RIDER ->{
-                                Role.RIDER
+                            Role.Rider ->{
+                                Role.Rider
                             }
-                            Role.ADMIN ->{
-                                Role.ADMIN
+                            Role.Admin ->{
+                                Role.Admin
                             }
                         }
                     )
