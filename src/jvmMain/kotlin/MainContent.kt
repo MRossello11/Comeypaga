@@ -126,7 +126,13 @@ fun MainContent(){
 
             is Screen.Registry -> {
                 RegistryScreen(
-                    registryController = RegistryController(userUseCases, screen.userRole),
+                    registryController = RegistryController(
+                        userUseCases = userUseCases,
+                        userRole = screen.userRole,
+                        user = screen.user,
+                        postRider = PostRider(adminRepository)
+                    ),
+                    user = screen.user,
                     onBack = navigation::pop
                 )
             }
@@ -160,6 +166,9 @@ fun MainContent(){
                             controller = ridersController,
                             onAddRider = {
                                 navigation.push(Screen.Registry(Role.Rider))
+                            },
+                            onClickRider = {
+                                navigation.push(Screen.Registry(Role.Rider, it))
                             }
                         )
                     }

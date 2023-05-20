@@ -4,7 +4,7 @@ import core.Utils
 import core.model.BaseResponse
 import feature_users.domain.model.UserResponse
 import feature_users.domain.repository.UserRepository
-
+@Deprecated("Better use UserUseCases.registryUseCase")
 class AddRider(
     private val userRepository: UserRepository
 ) {

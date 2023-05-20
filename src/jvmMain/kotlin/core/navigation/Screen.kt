@@ -6,6 +6,7 @@ import core.model.Plate
 import core.model.Restaurant
 import feature_users.domain.model.Role
 import feature_users.domain.model.User
+import feature_users.domain.model.UserResponse
 
 sealed class Screen: Parcelable {
     @Parcelize
@@ -13,7 +14,7 @@ sealed class Screen: Parcelable {
     @Parcelize
     object UserResetPassword: Screen()
     @Parcelize
-    data class Registry(val userRole: Role): Screen()
+    data class Registry(val userRole: Role, val user: UserResponse = UserResponse()): Screen()
     @Parcelize
     data class UserMain(val user: User): Screen()
     @Parcelize

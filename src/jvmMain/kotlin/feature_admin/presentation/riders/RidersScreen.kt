@@ -1,5 +1,6 @@
 package feature_admin.presentation.riders
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
@@ -17,20 +18,24 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.window.Dialog
 import core.ComeypagaStyles
 import core.ComeypagaStyles.spacerModifier
+import core.Constants
 import core.components.dialogs.OneOptionDialog
 import core.components.dialogs.TwoOptionDialog
 import feature_admin.presentation.riders.components.RiderListItem
 import feature_users.domain.model.User
+import feature_users.domain.model.UserResponse
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RidersScreen(
     controller: RidersController,
-    onAddRider: () -> Unit
+    onAddRider: () -> Unit,
+    onClickRider: (UserResponse) -> Unit
 ) {
     val riders = remember { mutableStateOf(listOf<User>()) }
 
@@ -150,6 +155,25 @@ fun RidersScreen(
 
                 // rider item
                 RiderListItem(
+                    modifier = Modifier
+                        .clickable {
+                            val appDateFormat = SimpleDateFormat(Constants.APP_DATE)
+                            val date = appDateFormat.format(rider.birthDate)
+
+                            onClickRider(UserResponse(
+                                _id = rider._id,
+                                username = rider.username,
+                                firstname = rider.firstname,
+                                lastname = rider.lastname,
+                                birthDate = date,
+                                phone = rider.phone,
+                                email = rider.email,
+                                address = rider.address,
+                                password = rider.password,
+                                passwordConfirmation = rider.password,
+
+                            ))
+                        },
                     rider = rider,
                     onDeleteRider = {
                         controller.onEvent(RidersEvent.DeleteRider(it))

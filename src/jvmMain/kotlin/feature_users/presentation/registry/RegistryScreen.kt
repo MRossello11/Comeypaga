@@ -1,14 +1,12 @@
 package feature_users.presentation.registry
 
-import androidx.compose.foundation.layout.BoxWithConstraints
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.window.Dialog
 import core.ComeypagaStyles
@@ -16,18 +14,24 @@ import core.components.AppHeader
 import core.components.LabeledTextField
 import core.components.PrimaryButton
 import core.components.dialogs.OneOptionDialog
-import feature_users.presentation.registry.Field.*
+import feature_users.domain.model.UserResponse
 import kotlinx.coroutines.flow.collectLatest
 import java.awt.Dimension
 
 @Composable
 fun RegistryScreen(
     onBack: () -> Unit,
-    registryController: RegistryController
+    registryController: RegistryController,
+    user: UserResponse = UserResponse()
 ) {
-    val viewState = registryController.registryState.collectAsState()
+    val viewState = registryController.state.collectAsState()
 
-    var state by remember { mutableStateOf(RegistryState()) }
+    var state by remember { mutableStateOf(
+        RegistryState(
+            user = user,
+        )
+    ) }
+
     val scrollState = rememberLazyListState()
 
     // dialog states
@@ -86,12 +90,14 @@ fun RegistryScreen(
             ) {
                 item {
                     LabeledTextField(
-                        value = state.username,
+                        value = state.user.username,
                         onValueChange = {
                             state = state.copy(
-                                username = it
+                                user = state.user.copy(
+                                    username = it
+                                )
                             )
-                            registryController.onEvent(RegistryEvent.FieldEntered(it, USERNAME))
+                            registryController.onEvent(RegistryEvent.FieldEntered(state.user))
                         },
                         label = "Username"
                     )
@@ -100,12 +106,14 @@ fun RegistryScreen(
                 }
                 item {
                     LabeledTextField(
-                        value = state.firstname,
+                        value = state.user.firstname,
                         onValueChange = {
                             state = state.copy(
-                                firstname = it
+                                user = state.user.copy(
+                                    firstname = it
+                                )
                             )
-                            registryController.onEvent(RegistryEvent.FieldEntered(it, FIRSTNAME))
+                            registryController.onEvent(RegistryEvent.FieldEntered(state.user))
                         },
                         label = "Name"
                     )
@@ -114,12 +122,14 @@ fun RegistryScreen(
                 }
                 item {
                     LabeledTextField(
-                        value = state.lastname,
+                        value = state.user.lastname,
                         onValueChange = {
                             state = state.copy(
-                                lastname = it
+                                user = state.user.copy(
+                                    lastname = it
+                                )
                             )
-                            registryController.onEvent(RegistryEvent.FieldEntered(it, LASTNAME))
+                            registryController.onEvent(RegistryEvent.FieldEntered(state.user))
                         },
                         label = "Lastname"
                     )
@@ -128,12 +138,14 @@ fun RegistryScreen(
                 }
                 item {
                     LabeledTextField(
-                        value = state.birthDate,
+                        value = state.user.birthDate,
                         onValueChange = {
                             state = state.copy(
-                                birthDate = it
+                                user = state.user.copy(
+                                    birthDate = it
+                                )
                             )
-                            registryController.onEvent(RegistryEvent.FieldEntered(it, BIRTH_DATE))
+                            registryController.onEvent(RegistryEvent.FieldEntered(state.user))
                         },
                         label = "Birth date"
                     )
@@ -142,12 +154,16 @@ fun RegistryScreen(
                 }
                 item {
                     LabeledTextField(
-                        value = state.street,
+                        value = state.user.address.street,
                         onValueChange = {
                             state = state.copy(
-                                street = it
+                                user = state.user.copy(
+                                    address = state.user.address.copy(
+                                        street = it
+                                    )
+                                )
                             )
-                            registryController.onEvent(RegistryEvent.FieldEntered(it, STREET))
+                            registryController.onEvent(RegistryEvent.FieldEntered(state.user))
                         },
                         label = "Street"
                     )
@@ -156,12 +172,16 @@ fun RegistryScreen(
                 }
                 item {
                     LabeledTextField(
-                        value = state.town,
+                        value = state.user.address.town,
                         onValueChange = {
                             state = state.copy(
-                                town = it
+                                user = state.user.copy(
+                                    address = state.user.address.copy(
+                                        town = it
+                                    )
+                                )
                             )
-                            registryController.onEvent(RegistryEvent.FieldEntered(it, TOWN))
+                            registryController.onEvent(RegistryEvent.FieldEntered(state.user))
                         },
                         label = "Town"
                     )
@@ -170,12 +190,14 @@ fun RegistryScreen(
                 }
                 item {
                     LabeledTextField(
-                        value = state.email,
+                        value = state.user.email,
                         onValueChange = {
                             state = state.copy(
-                                email = it
+                                user = state.user.copy(
+                                    email = it
+                                )
                             )
-                            registryController.onEvent(RegistryEvent.FieldEntered(it, EMAIL))
+                            registryController.onEvent(RegistryEvent.FieldEntered(state.user))
                         },
                         label = "Email"
                     )
@@ -185,12 +207,14 @@ fun RegistryScreen(
 
                 item {
                     LabeledTextField(
-                        value = state.phone,
+                        value = state.user.phone,
                         onValueChange = {
                             state = state.copy(
-                                phone = it
+                                user = state.user.copy(
+                                    phone = it
+                                )
                             )
-                            registryController.onEvent(RegistryEvent.FieldEntered(it, PHONE))
+                            registryController.onEvent(RegistryEvent.FieldEntered(state.user))
                         },
                         label = "Phone"
                     )
@@ -199,12 +223,14 @@ fun RegistryScreen(
                 }
                 item {
                     LabeledTextField(
-                        value = state.password,
+                        value = state.user.password,
                         onValueChange = {
                             state = state.copy(
-                                password = it
+                                user = state.user.copy(
+                                    password = it
+                                )
                             )
-                            registryController.onEvent(RegistryEvent.FieldEntered(it, PASSWORD))
+                            registryController.onEvent(RegistryEvent.FieldEntered(state.user))
                         },
                         label = "Password",
                         visualTransformation = PasswordVisualTransformation()
@@ -214,12 +240,14 @@ fun RegistryScreen(
                 }
                 item {
                     LabeledTextField(
-                        value = state.passwordConfirmation,
+                        value = state.user.passwordConfirmation,
                         onValueChange = {
                             state = state.copy(
-                                passwordConfirmation = it
+                                user = state.user.copy(
+                                    passwordConfirmation = it
+                                )
                             )
-                            registryController.onEvent(RegistryEvent.FieldEntered(it, PASSWORD_CONFIRMATION))
+                            registryController.onEvent(RegistryEvent.FieldEntered(state.user))
                         },
                         label = "Confirm password",
                         visualTransformation = PasswordVisualTransformation()
@@ -228,12 +256,31 @@ fun RegistryScreen(
 
                 }
                 item {
-                    PrimaryButton(
-                        content = "Create account",
-                        onClick = {
-                            registryController.onEvent(RegistryEvent.Registry)
+                    if (user._id.isEmpty()) {
+                        PrimaryButton(
+                            content = "Create account",
+                            onClick = {
+                                registryController.onEvent(RegistryEvent.Registry)
+                            }
+                        )
+                    } else {
+                        Row(){
+                            PrimaryButton(
+                                modifier = Modifier.weight(1f),
+                                content = "Cancel",
+                                onClick = onBack,
+                                backgroundColor = Color.Red
+                            )
+                            PrimaryButton(
+                                modifier = Modifier.weight(1f),
+                                content = "Save",
+                                onClick = {
+                                    registryController.onEvent(RegistryEvent.Modify)
+                                }
+                            )
                         }
-                    )
+
+                    }
                 }
             }
         }
