@@ -1,37 +1,24 @@
 package feature_users.domain.model
 
-import com.google.gson.annotations.SerializedName
 import core.model.Address
-import java.util.*
 
 data class UserResponse(
-    @SerializedName("username")
-    val username: String,
+    val _id: String = "",
+    val username: String = "",
+    val firstname: String = "",
+    val lastname: String = "",
+    val birthDate: String = "",
+    val phone: String = "",
+    val email: String = "",
+    val address: Address = Address("",""),
+    val password: String = "",
+    @Transient
+    val passwordConfirmation: String = "",
+    val role: String = Role.User.toString()
+)
 
-    @SerializedName("firstname")
-    val firstname: String,
-
-    @SerializedName("lastname")
-    val lastname: String,
-
-    @SerializedName("birthDate")
-    val birthDate: String,
-
-    @SerializedName("phone")
-    val phone: String,
-
-    @SerializedName("email")
-    val email: String,
-
-    @SerializedName("address")
-    val address: Address,
-
-    @SerializedName("password")
-    val password: String,
-
-    @SerializedName("role")
-    val role: String = Role.USER.toString()
-
+data class RiderList(
+    val riders: List<UserResponse>
 )
 
 class InvalidUser(message: String): Exception(message)

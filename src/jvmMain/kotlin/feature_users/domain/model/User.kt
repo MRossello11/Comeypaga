@@ -4,6 +4,7 @@ import core.model.Address
 import java.util.*
 
 data class User(
+    val _id: String,
     val username: String,
 
     val firstname: String,
@@ -20,5 +21,5 @@ data class User(
 
     val password: String,
 
-    val role: Role = Role.USER
+    val role: Role = Role.User
 )

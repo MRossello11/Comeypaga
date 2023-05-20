@@ -17,8 +17,8 @@ import core.ComeypagaStyles.appColors
 import core.ComeypagaStyles.spacerModifier
 import core.components.AppHeader
 import core.components.LabeledTextField
-import core.components.OneOptionDialog
 import core.components.PrimaryButton
+import core.components.dialogs.OneOptionDialog
 import feature_users.domain.model.Role
 import feature_users.domain.model.User
 import kotlinx.coroutines.flow.collectLatest
@@ -60,15 +60,15 @@ fun LoginScreen(
                     // navigate to corresponding screen
                     viewState.user?.let { user ->
                         when(user.role){
-                            Role.USER -> {
+                            Role.User -> {
                                 onUserLogin(user)
                             }
 
-                            Role.RIDER -> {
+                            Role.Rider -> {
                                 onRiderLogin(user)
                             }
 
-                            Role.ADMIN-> {
+                            Role.Admin-> {
                                 onAdminLogin(user)
                             }
                         }

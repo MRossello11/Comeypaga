@@ -1,4 +1,4 @@
-package core.components
+package core.components.dialogs
 
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.background
@@ -15,6 +15,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import core.ComeypagaStyles.appColors
 import core.ComeypagaStyles.spacerModifier
+import core.components.PrimaryButton
 
 @Composable
 fun OneOptionDialog(

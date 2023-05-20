@@ -13,8 +13,8 @@ import androidx.compose.ui.window.Dialog
 import core.ComeypagaStyles.spacerModifier
 import core.components.AppHeader
 import core.components.LabeledTextField
-import core.components.OneOptionDialog
 import core.components.PrimaryButton
+import core.components.dialogs.OneOptionDialog
 import kotlinx.coroutines.flow.collectLatest
 import java.awt.Dimension
 
