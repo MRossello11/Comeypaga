@@ -6,13 +6,15 @@ import androidx.compose.material.TabRow
 import androidx.compose.material.Text
 import androidx.compose.material3.Tab
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import core.ComeypagaStyles
 import core.components.AppHeader
+
+var currentTab: MutableState<Int> = mutableStateOf(0)
 
 @Composable
 fun AdminMainScreen(
@@ -20,12 +22,9 @@ fun AdminMainScreen(
     restaurantsContent: @Composable() () -> Unit,
     ridersContent: @Composable() () -> Unit
 ){
-    val currentTab = remember { mutableStateOf(0) }
-
     Column(
 
     ) {
-
         AppHeader(
             title = "Administration menu",
             onClickBack = onBack
