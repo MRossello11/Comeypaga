@@ -55,8 +55,6 @@ class RidersController(
                                     actualRider = null,
                                 )
                             }
-                            getRiders()
-
                         } else {
                             _eventFlow.emit(UiEvent.ShowDialog("Error deleting rider"))
                         }

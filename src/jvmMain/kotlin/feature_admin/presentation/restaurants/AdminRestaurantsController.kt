@@ -38,13 +38,14 @@ class AdminRestaurantsController(
 
                         // handle response
                         if (_state.value.response.errorCode in 200..299){
-                            _eventFlow.emit(UiEvent.RestaurantDeleted("Restaurant '${_state.value.actualRestaurant!!.name}' deleted"))
+                            _eventFlow.emit(UiEvent.ShowDialog("Restaurant '${_state.value.actualRestaurant!!.name}' deleted"))
+                            _eventFlow.emit(UiEvent.RestaurantDeleted)
+
                             _state.update { state ->
                                 state.copy(
                                     actualRestaurant = null
                                 )
                             }
-                            getRestaurants()
                         } else {
                             _eventFlow.emit(UiEvent.ShowDialog(message = _state.value.response.message ?: "An error occurred deleting restaurant"))
                         }
@@ -110,6 +111,6 @@ class AdminRestaurantsController(
     sealed class UiEvent{
         data class ShowDialog(val message: String): UiEvent()
         data class ShowDeleteRestaurantDialogConfirmation(val message: String): UiEvent()
-        data class RestaurantDeleted(val message: String): UiEvent()
+        object RestaurantDeleted: UiEvent()
     }
 }

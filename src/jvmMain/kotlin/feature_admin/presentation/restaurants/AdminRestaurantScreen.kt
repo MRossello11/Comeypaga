@@ -25,7 +25,10 @@ import core.components.dialogs.OneOptionDialog
 import core.components.dialogs.TwoOptionDialog
 import core.components.restaurants.RestaurantCard
 import core.model.Restaurant
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -48,9 +51,16 @@ fun AdminRestaurantScreen(
                     errorDialogMessage = event.message
                     showDialog = true
                 }
-                is AdminRestaurantsController.UiEvent.RestaurantDeleted -> {
-                    errorDialogMessage = event.message
-                    showDialog = true
+                AdminRestaurantsController.UiEvent.RestaurantDeleted -> {
+                    CoroutineScope(Dispatchers.IO).launch{
+                        // get updated list
+                        val result = controller.getRestaurants()
+
+                        // set list
+                        result?.let {
+                            restaurants.value = it
+                        }
+                    }
                 }
                 is AdminRestaurantsController.UiEvent.ShowDeleteRestaurantDialogConfirmation -> {
                     showTwoOptionsDialog = true
