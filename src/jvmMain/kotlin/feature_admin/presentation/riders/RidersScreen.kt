@@ -14,7 +14,10 @@ import core.components.dialogs.OneOptionDialog
 import core.components.dialogs.TwoOptionDialog
 import feature_admin.presentation.riders.components.RiderListItem
 import feature_users.domain.model.User
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 @Composable
 fun RidersScreen(
@@ -38,6 +41,17 @@ fun RidersScreen(
                 is RidersController.UiEvent.ShowDeleteRiderDialogConfirmation -> {
                     errorDialogMessage = event.message
                     showTwoOptionsDialog = true
+                }
+                RidersController.UiEvent.RiderDeleted -> {
+                    CoroutineScope(Dispatchers.IO).launch {
+                        // get updated list
+                        val result = controller.getRiders()
+
+                        // set result
+                        result?.let {
+                            riders.value = it
+                        }
+                    }
                 }
             }
         }

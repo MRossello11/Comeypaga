@@ -46,11 +46,17 @@ class RidersController(
                             riderId = _state.value.actualRider!!._id
                         )
 
-                        getRiders()
-
                         // evaluate response
                         if (_state.value.response.errorCode in 200..299){
                             _eventFlow.emit(UiEvent.ShowDialog("Rider deleted"))
+                            _eventFlow.emit(UiEvent.RiderDeleted)
+                            _state.update { state ->
+                                state.copy(
+                                    actualRider = null,
+                                )
+                            }
+                            getRiders()
+
                         } else {
                             _eventFlow.emit(UiEvent.ShowDialog("Error deleting rider"))
                         }
@@ -88,5 +94,6 @@ class RidersController(
     sealed class UiEvent{
         data class ShowDialog(val message: String): UiEvent()
         data class ShowDeleteRiderDialogConfirmation(val message: String): UiEvent()
+        object RiderDeleted: UiEvent()
     }
 }
