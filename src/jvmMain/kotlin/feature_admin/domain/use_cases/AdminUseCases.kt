@@ -9,7 +9,6 @@ data class AdminUseCases(
     val modifyPlate: ModifyPlate,
     val deletePlate: DeletePlate,
     val getRiders: GetRiders,
-    val addRider: AddRider,
     val postRider: PostRider,
     val deleteRider: DeleteRider
 )

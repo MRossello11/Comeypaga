@@ -81,7 +81,6 @@ fun MainContent(){
         modifyPlate = ModifyPlate(adminRepository),
         deletePlate = DeletePlate(adminRepository),
         getRiders = GetRiders(adminRepository),
-        addRider = AddRider(userRepository),
         postRider = PostRider(adminRepository),
         deleteRider = DeleteRider(adminRepository),
     )
