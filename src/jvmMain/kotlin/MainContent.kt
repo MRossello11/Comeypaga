@@ -1,3 +1,4 @@
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import com.arkivanov.decompose.ExperimentalDecomposeApi
@@ -24,10 +25,11 @@ import feature_admin.presentation.add_modify_restaurant.AddModifyRestaurantScree
 import feature_admin.presentation.main.AdminMainScreen
 import feature_admin.presentation.menu.MenuController
 import feature_admin.presentation.menu.MenuScreen
-import feature_admin.presentation.restaurants.AdminRestaurantScreen
 import feature_admin.presentation.restaurants.AdminRestaurantsController
+import feature_admin.presentation.restaurants.RestaurantsScreen
 import feature_admin.presentation.riders.RidersController
 import feature_admin.presentation.riders.RidersScreen
+import feature_user.presentation.main.UserMainScreen
 import feature_users.data.UserRepositoryImpl
 import feature_users.data.data_source.UserDataSource
 import feature_users.domain.model.Role
@@ -136,9 +138,26 @@ fun MainContent(){
                 )
             }
 
-            // todo: Users pages
+            // Users pages
             is Screen.UserMain -> {
-                println("User page")
+                UserMainScreen(
+                    onBack = navigation::pop,
+                    restaurantsContent = {
+                        RestaurantsScreen(
+                            controller = AdminRestaurantsController(adminUseCases),
+                            onAddRestaurant = {},
+                            onClickRestaurant = {
+                                // todo navigate to RestaurantDetails
+                            },
+                        )
+                    },
+                    cartContent = {
+                        Text(text = "Cart content")
+                    },
+                    ordersContent = {
+                        Text(text = "Orders content")
+                    }
+                )
             }
             is Screen.RiderMain -> {
                 println("Rider page")
@@ -149,14 +168,15 @@ fun MainContent(){
                     onBack = navigation::pop,
                     restaurantsContent = {
                         val adminRestaurantsController = AdminRestaurantsController(adminUseCases)
-                        AdminRestaurantScreen(
+                        RestaurantsScreen(
                             controller = adminRestaurantsController,
                             onAddRestaurant = {
                                 navigation.push(Screen.AddModifyRestaurant(null))
                             },
                             onClickRestaurant = {
                                 navigation.push(Screen.AddModifyRestaurant(it))
-                            }
+                            },
+                            editMode = true
                         )
                     },
                     ridersContent = {
