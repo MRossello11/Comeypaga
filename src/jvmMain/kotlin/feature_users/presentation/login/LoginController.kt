@@ -1,5 +1,6 @@
 package feature_users.presentation.login
 
+import core.Properties
 import feature_users.domain.model.InvalidLoginRequest
 import feature_users.domain.model.LoginRequest
 import feature_users.domain.use_cases.UserUseCases
@@ -50,6 +51,7 @@ class LoginController(
                         )
                         if (_loginState.value.loginResponse.errorCode in 200..299){
                             _loginState.value.user?.let {
+                                Properties.userLogged = it
                                 _eventFlow.emit(UiEvent.Login)
                             } ?: run {
                                 throw InvalidLoginRequest("Error logging in")
