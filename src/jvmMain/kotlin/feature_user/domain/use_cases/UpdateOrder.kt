@@ -14,7 +14,7 @@ class UpdateOrder(
 ) {
     suspend operator fun invoke(
         order: Order,
-        callback: (response: BaseResponse, order: OrderWS?) -> Unit
+        callback: (response: BaseResponse, order: Order?) -> Unit
     ) {
         // order state is verified on server
 
@@ -34,6 +34,23 @@ class UpdateOrder(
         )
 
         // send request
-        userOrderRepository.updateOrder(orderWS, callback)
+        userOrderRepository.updateOrder(orderWS) { response, returnedOrderWS ->
+            // Map OrderWS to Order
+            val orderToReturn = returnedOrderWS?.let {
+                Order(
+                    _id = it._id,
+                    shippingAddress = it.shippingAddress,
+                    state = it.state,
+                    arrivalTime = dbDate.parse(it.arrivalTime),
+                    restaurantId = it.restaurantId,
+                    restaurantName = it.restaurantName,
+                    userId = it.userId,
+                    orderLines = it.orderLines
+                )
+            }
+
+            // Invoke the original callback with the mapped Order object
+            callback(response, orderToReturn)
+        }
     }
 }
