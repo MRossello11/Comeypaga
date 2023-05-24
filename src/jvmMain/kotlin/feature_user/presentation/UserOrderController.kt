@@ -18,7 +18,8 @@ class UserOrderController(
         Order(
             restaurantId = restaurant._id!!,
             restaurantName = restaurant.name,
-            userId = Properties.userLogged?._id!!
+            userId = Properties.userLogged?._id!!,
+            shippingAddress = Properties.userLogged?.address!!
         )
     ))
     val state = _state.asStateFlow()
@@ -30,10 +31,40 @@ class UserOrderController(
         CoroutineScope(Dispatchers.IO).launch {
             when (event) {
                 is UpdateOrder -> {
-                    _state.update { state ->
-                        state.copy(
-                            order = event.order
-                        )
+                    // add, modify or delete new order line
+                    if (event.newOrderLine.quantity == 0){
+                        // delete line if quantity == 0
+                        val newOrderLines = _state.value.order.orderLines
+                        newOrderLines.removeIf { it.plateId == event.newOrderLine.plateId }
+
+                        // update value
+                        _state.update { state ->
+                            state.copy(
+                                order = state.order.copy(
+                                    orderLines = newOrderLines
+                                )
+                            )
+                        }
+                    } else {
+                        // add or modify if quantity > 0
+                        val indexOfNewLine = _state.value.order.orderLines.indexOf(event.newOrderLine)
+                        val newOrderLines = _state.value.order.orderLines
+
+                        if (indexOfNewLine == -1){
+                            // if it's a new line, add it
+                            newOrderLines.add(event.newOrderLine)
+                        } else {
+                            // if the line already exists, replace it
+                            newOrderLines[indexOfNewLine] = event.newOrderLine
+                        }
+                        // update values
+                        _state.update { state ->
+                            state.copy(
+                                order = state.order.copy(
+                                    orderLines = newOrderLines
+                                )
+                            )
+                        }
                     }
 
                     userOrderUseCases.updateOrder(

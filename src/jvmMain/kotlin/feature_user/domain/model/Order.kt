@@ -18,8 +18,22 @@ data class Order(
 data class OrderLine(
     val plateId: String = "",
     val plateName: String = "",
-    val quantity: Int = 0,
+    var quantity: Int = 0,
     val price: Float = 0f
+) {
+    override fun equals(other: Any?): Boolean {
+        if (other is OrderLine) {
+            return this.plateId == other.plateId
+        }
+        return false
+    }
+}
+
+data class OrderLineWS(
+    val plateId: String = "",
+    val plateName: String = "",
+    var quantity: Int = 0,
+    val price: String = ""
 )
 
 // Order object to send to the web server
@@ -32,7 +46,7 @@ data class OrderWS(
     val restaurantName: String,
     val userId: String,
     val riderId: String = "",
-    val orderLines: ArrayList<OrderLine> = arrayListOf()
+    val orderLines: List<OrderLineWS> = listOf()
 )
 
 data class OrderWrapper(

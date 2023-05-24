@@ -27,4 +27,6 @@ sealed class Screen: Parcelable {
     data class MenuScreen(val restaurant: Restaurant): Screen()
     @Parcelize
     data class AddModifyPlateScreen(val restaurant: Restaurant?, val plate: Plate?): Screen()
+    @Parcelize
+    data class RestaurantDetailsScreen(val restaurant: Restaurant): Screen()
 }

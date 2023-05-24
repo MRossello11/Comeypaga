@@ -29,7 +29,14 @@ import feature_admin.presentation.restaurants.AdminRestaurantsController
 import feature_admin.presentation.restaurants.RestaurantsScreen
 import feature_admin.presentation.riders.RidersController
 import feature_admin.presentation.riders.RidersScreen
+import feature_user.data.UserOrderRepositoryImpl
+import feature_user.data.data_source.UserOrderDataSource
+import feature_user.domain.use_cases.CancelOrder
+import feature_user.domain.use_cases.UpdateOrder
+import feature_user.domain.use_cases.UserOrderUseCases
+import feature_user.presentation.UserOrderController
 import feature_user.presentation.main.UserMainScreen
+import feature_user.presentation.restaurant_details.RestaurantDetailsScreen
 import feature_users.data.UserRepositoryImpl
 import feature_users.data.data_source.UserDataSource
 import feature_users.domain.model.Role
@@ -89,6 +96,13 @@ fun MainContent(){
 
     var actualRestaurant: Restaurant
 
+    // user order
+    val userOrderRepository = UserOrderRepositoryImpl(retrofit.create(UserOrderDataSource::class.java))
+    val userOrderUseCases = UserOrderUseCases(
+        cancelOrder = CancelOrder(userOrderRepository),
+        updateOrder = UpdateOrder(userOrderRepository)
+    )
+
     // navigation
     val navigation = remember { StackNavigation<Screen>() }
     ChildStack(
@@ -109,7 +123,7 @@ fun MainContent(){
                     onUserLogin = {
                         navigation.push(Screen.UserMain(it))
                     },
-                    onRiderLogin ={
+                    onRiderLogin = {
                         navigation.push(Screen.RiderMain(it))
                     },
                     onAdminLogin = {
@@ -138,32 +152,11 @@ fun MainContent(){
                 )
             }
 
-            // Users pages
-            is Screen.UserMain -> {
-                UserMainScreen(
-                    onBack = navigation::pop,
-                    restaurantsContent = {
-                        RestaurantsScreen(
-                            controller = AdminRestaurantsController(adminUseCases),
-                            onAddRestaurant = {},
-                            onClickRestaurant = {
-                                // todo navigate to RestaurantDetails
-                            },
-                        )
-                    },
-                    cartContent = {
-                        Text(text = "Cart content")
-                    },
-                    ordersContent = {
-                        Text(text = "Orders content")
-                    }
-                )
-            }
             is Screen.RiderMain -> {
                 println("Rider page")
             }
 
-            is Screen.AdminMain ->{
+            is Screen.AdminMain -> {
                 AdminMainScreen(
                     onBack = navigation::pop,
                     restaurantsContent = {
@@ -258,7 +251,38 @@ fun MainContent(){
                         )
                     }
                 }
+            }
+            // User pages
+            is Screen.UserMain -> {
+                UserMainScreen(
+                    onBack = navigation::pop,
+                    restaurantsContent = {
+                        RestaurantsScreen(
+                            controller = AdminRestaurantsController(adminUseCases),
+                            onAddRestaurant = {},
+                            onClickRestaurant = {
+                                // navigate to RestaurantDetails
+                                navigation.push(Screen.RestaurantDetailsScreen(it))
+                            },
+                        )
+                    },
+                    cartContent = {
+                        Text(text = "Cart content")
+                    },
+                    ordersContent = {
+                        Text(text = "Orders content")
+                    }
+                )
+            }
 
+            // user order
+            is Screen.RestaurantDetailsScreen -> {
+                println("Menu screen: ${screen.restaurant.menu}")
+                RestaurantDetailsScreen(
+                    restaurant = screen.restaurant,
+                    controller = UserOrderController(screen.restaurant, userOrderUseCases),
+                    onBack = navigation::pop
+                )
             }
         }
     }
