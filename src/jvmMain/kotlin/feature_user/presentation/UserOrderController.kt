@@ -1,7 +1,7 @@
 package feature_user.presentation
 
+import core.Constants
 import core.Properties
-import core.model.Restaurant
 import feature_user.domain.model.Order
 import feature_user.domain.use_cases.UserOrderUseCases
 import feature_user.presentation.UserOrderEvent.*
@@ -11,13 +11,10 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
 class UserOrderController(
-    restaurant: Restaurant,
     private val userOrderUseCases: UserOrderUseCases
 ) {
     private val _state = MutableStateFlow(UserOrderState(
         Order(
-            restaurantId = restaurant._id!!,
-            restaurantName = restaurant.name,
             userId = Properties.userLogged?._id!!,
             shippingAddress = Properties.userLogged?.address!!
         )
@@ -27,10 +24,62 @@ class UserOrderController(
     private val _eventFlow = MutableSharedFlow<UiEvent>()
     val eventFlow = _eventFlow.asSharedFlow()
 
+    init {
+        // recover created orders from user
+        CoroutineScope(Dispatchers.IO).launch {
+            userOrderUseCases.getOrdersUser(
+                userId = Properties.userLogged?._id!!,
+                callback = { response, orders ->
+                    // differ orders in curse from created order
+                    var order = Order(userId = Properties.userLogged?._id!!)
+                    val ordersInCurse = arrayListOf<Order>()
+                    orders.forEach {
+                        if (it.state == Constants.OrderStates.CREATED){
+                            order = it
+                        } else {
+                            ordersInCurse.add(it)
+                        }
+                    }
+
+                    _state.update { state ->
+                        state.copy(
+                            order = order,
+                            ordersInCurse = ordersInCurse,
+                            response = response
+                        )
+                    }
+                }
+            )
+        }
+    }
+
     fun onEvent(event: UserOrderEvent) {
         CoroutineScope(Dispatchers.IO).launch {
             when (event) {
                 is UpdateOrder -> {
+                    // if there's an order open, and it's not from the same restaurant
+                    if (
+                        _state.value.order.restaurantId.isNotEmpty() &&
+                        _state.value.order.restaurantId != (event.restaurant?._id ?: "")
+                    ){
+                        _eventFlow.emit(UiEvent.ShowDialog("Only one order per restaurant is permitted"))
+                        return@launch
+                    }
+
+                    // set restaurant if it's not set already
+                    if (_state.value.order.restaurantId.isEmpty()){
+                        event.restaurant?.let {
+                            _state.update { state ->
+                                state.copy(
+                                    order = state.order.copy(
+                                        restaurantId = it._id!!,
+                                        restaurantName = it.name
+                                    )
+                                )
+                            }
+                        }
+                    }
+
                     // add, modify or delete new order line
                     if (event.newOrderLine.quantity == 0){
                         // delete line if quantity == 0

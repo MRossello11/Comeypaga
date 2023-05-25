@@ -8,8 +8,8 @@ data class Order(
     val shippingAddress: Address = Address("", ""),
     val state: Int = 0,
     val arrivalTime: Date = Date(),
-    val restaurantId: String,
-    val restaurantName: String,
+    val restaurantId: String = "",
+    val restaurantName: String = "",
     val userId: String,
     val riderId: String = "",
     val orderLines: ArrayList<OrderLine> = arrayListOf()
@@ -27,6 +27,10 @@ data class OrderLine(
         }
         return false
     }
+
+    override fun hashCode(): Int {
+        return super.hashCode()
+    }
 }
 
 data class OrderLineWS(
@@ -42,8 +46,8 @@ data class OrderWS(
     val shippingAddress: Address = Address("", ""),
     val state: Int = 0,
     val arrivalTime: String = "",
-    val restaurantId: String,
-    val restaurantName: String,
+    val restaurantId: String = "",
+    val restaurantName: String = "",
     val userId: String,
     val riderId: String = "",
     val orderLines: List<OrderLineWS> = listOf()

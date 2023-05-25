@@ -32,6 +32,7 @@ import feature_admin.presentation.riders.RidersScreen
 import feature_user.data.UserOrderRepositoryImpl
 import feature_user.data.data_source.UserOrderDataSource
 import feature_user.domain.use_cases.CancelOrder
+import feature_user.domain.use_cases.GetOrdersUser
 import feature_user.domain.use_cases.UpdateOrder
 import feature_user.domain.use_cases.UserOrderUseCases
 import feature_user.presentation.UserOrderController
@@ -100,7 +101,8 @@ fun MainContent(){
     val userOrderRepository = UserOrderRepositoryImpl(retrofit.create(UserOrderDataSource::class.java))
     val userOrderUseCases = UserOrderUseCases(
         cancelOrder = CancelOrder(userOrderRepository),
-        updateOrder = UpdateOrder(userOrderRepository)
+        updateOrder = UpdateOrder(userOrderRepository),
+        getOrdersUser = GetOrdersUser(userOrderRepository)
     )
 
     // navigation
@@ -277,10 +279,9 @@ fun MainContent(){
 
             // user order
             is Screen.RestaurantDetailsScreen -> {
-                println("Menu screen: ${screen.restaurant.menu}")
                 RestaurantDetailsScreen(
                     restaurant = screen.restaurant,
-                    controller = UserOrderController(screen.restaurant, userOrderUseCases),
+                    controller = UserOrderController(userOrderUseCases),
                     onBack = navigation::pop
                 )
             }
