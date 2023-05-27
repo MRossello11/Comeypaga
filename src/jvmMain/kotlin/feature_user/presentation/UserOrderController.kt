@@ -7,6 +7,7 @@ import feature_user.domain.use_cases.UserOrderUseCases
 import feature_user.presentation.UserOrderEvent.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
@@ -25,8 +26,11 @@ class UserOrderController(
     val eventFlow = _eventFlow.asSharedFlow()
 
     init {
-        // recover created orders from user
-        CoroutineScope(Dispatchers.IO).launch {
+        getOrdersInCurse()
+    }
+
+    private fun getOrdersInCurse() = CoroutineScope(Dispatchers.IO).async {
+            // recover orders (that are not sent) from user
             userOrderUseCases.getOrdersUser(
                 userId = Properties.userLogged?._id!!,
                 callback = { response, orders ->
@@ -34,7 +38,7 @@ class UserOrderController(
                     var order = Order(userId = Properties.userLogged?._id!!)
                     val ordersInCurse = arrayListOf<Order>()
                     orders.forEach {
-                        if (it.state == Constants.OrderStates.CREATED){
+                        if (it.state == Constants.OrderStates.CREATED) {
                             order = it
                         } else {
                             ordersInCurse.add(it)
@@ -51,7 +55,6 @@ class UserOrderController(
                 }
             )
         }
-    }
 
     fun onEvent(event: UserOrderEvent) {
         CoroutineScope(Dispatchers.IO).launch {
@@ -197,8 +200,13 @@ class UserOrderController(
         }
     }
 
+    suspend fun getCurrentOrder(): Order{
+        getOrdersInCurse().await()
+        return _state.value.order
+    }
+
     sealed class UiEvent {
         data class ShowDialog(val message: String): UiEvent()
-
+        data class UpdateUi(val order: Order): UiEvent()
     }
 }

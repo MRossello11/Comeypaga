@@ -7,7 +7,7 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -15,6 +15,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import core.components.PrimaryButton
 import core.model.Plate
+import feature_user.domain.model.OrderLine
 
 @Composable
 fun PlateListItem(
@@ -22,12 +23,9 @@ fun PlateListItem(
     plate: Plate,
     editMode: Boolean = false,
     onDeletePlate: (Plate) -> Unit,
-    initialQuantity: Int = 0,
+    orderLine: OrderLine? = null,
     onChangeQuantity: (Int) -> Unit = {}
 ) {
-    var quantity by remember {
-        mutableStateOf(initialQuantity)
-    }
     Row(
         modifier = modifier.defaultMinSize(minHeight = 20.dp),
         verticalAlignment = Alignment.CenterVertically
@@ -76,9 +74,11 @@ fun PlateListItem(
                         modifier = Modifier.clip(CircleShape),
                         content = "-",
                         onClick = {
-                            if (quantity > 0) { // avoid negative quantities
-                                quantity--
-                                onChangeQuantity(quantity)
+                            orderLine?.let { line ->
+                                if (line.quantity > 0) { // avoid negative quantities
+                                    line.quantity--
+                                    onChangeQuantity(line.quantity)
+                                }
                             }
                         }
                     )
@@ -87,7 +87,7 @@ fun PlateListItem(
 
                     // quantity text
                     Text(
-                        text = quantity.toString(),
+                        text = orderLine?.quantity.toString(),
                         fontSize = 17.sp
                     )
 
@@ -97,8 +97,10 @@ fun PlateListItem(
                         modifier = Modifier.clip(CircleShape),
                         content = "+",
                         onClick = {
-                            quantity++
-                            onChangeQuantity(quantity)
+                            orderLine?.let { line ->
+                                line.quantity++
+                                onChangeQuantity(line.quantity)
+                            }
                         }
                     )
                 }
