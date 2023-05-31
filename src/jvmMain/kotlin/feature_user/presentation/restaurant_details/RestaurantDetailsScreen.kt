@@ -16,13 +16,10 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import core.ComeypagaStyles
-import core.Properties
 import core.components.AppHeader
 import core.components.dialogs.OneOptionDialog
 import core.components.restaurants.PlateListItem
 import core.model.Restaurant
-import feature_user.domain.model.Order
-import feature_user.domain.model.OrderLine
 import feature_user.presentation.UserOrderController
 import feature_user.presentation.UserOrderEvent
 import kotlinx.coroutines.flow.collectLatest
@@ -33,7 +30,7 @@ fun RestaurantDetailsScreen(
     controller: UserOrderController,
     onBack: () -> Unit,
 ) {
-    val state = remember { mutableStateOf(Order(userId = Properties.userLogged?._id!!)) }
+    val viewState by controller.state.collectAsState()
 
     // dialog states
     var showDialog by remember { mutableStateOf(false) }
@@ -46,23 +43,13 @@ fun RestaurantDetailsScreen(
                     errorDialogMessage = event.message
                     showDialog = true
                 }
-
-                is UserOrderController.UiEvent.UpdateUi -> {
-                    state.value = event.order
-                }
             }
         }
     }
 
     LaunchedEffect(Unit){
-        val createdOrder = controller.getCurrentOrder()
-
-        // if the current restaurant is the same as the
-        // created order's restaurant, set the order to update UI
-        // w/current order's info
-        if (createdOrder.restaurantId == restaurant._id){
-            state.value = createdOrder
-        }
+        // update current order
+        controller.setOrderInCurse(restaurant)
     }
 
     Dialog(
@@ -150,39 +137,27 @@ fun RestaurantDetailsScreen(
         LazyColumn(
             modifier = Modifier
         ) {
-            // todo: make list dependent on state
-            items(restaurant.menu ?: listOf()){ plate ->
-                val orderLine =
-                    state.value.orderLines.find { it.plateId == plate._id } ?:
-                    OrderLine(
-                        plateId = plate._id,
-                        plateName = plate.plateName,
-                        quantity = 0,
-                        price = plate.price.toFloatOrNull() ?: 0f
+            items(viewState.order.orderLines){ orderLine ->
+                val plate = restaurant.menu?.find { it._id == orderLine.plateId }
+                plate?.let {
+
+                    PlateListItem(
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        plate = plate,
+                        onDeletePlate = {},
+                        editMode = false,
+                        quantity = orderLine.quantity,
+                        onChangeQuantity = {
+                            controller.onEvent(
+                                UserOrderEvent.UpdateOrder(
+                                    restaurant = restaurant,
+                                    newOrderLine = orderLine.copy(quantity = it)
+                                )
+                            )
+                        }
                     )
-
-                PlateListItem(
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    plate = plate,
-                    onDeletePlate = {},
-                    editMode = false,
-                    orderLine = orderLine,
-                    onChangeQuantity = {
-                        val newOrderLine = OrderLine(
-                            plateId = plate._id,
-                            plateName = plate.plateName,
-                            price = plate.price.toFloat(),
-                            quantity = it
-                        )
-
-                        controller.onEvent(UserOrderEvent.UpdateOrder(
-                            restaurant = restaurant,
-                            newOrderLine = newOrderLine
-                        ))
-                    }
-                )
-
+                }
             }
         }
     }

@@ -2,12 +2,13 @@ package feature_user.presentation
 
 import core.Constants
 import core.Properties
+import core.model.Restaurant
 import feature_user.domain.model.Order
+import feature_user.domain.model.OrderLine
 import feature_user.domain.use_cases.UserOrderUseCases
 import feature_user.presentation.UserOrderEvent.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
@@ -20,7 +21,7 @@ class UserOrderController(
             shippingAddress = Properties.userLogged?.address!!
         )
     ))
-    val state = _state.asStateFlow()
+    val state: StateFlow<UserOrderState> = _state.asStateFlow()
 
     private val _eventFlow = MutableSharedFlow<UiEvent>()
     val eventFlow = _eventFlow.asSharedFlow()
@@ -29,7 +30,7 @@ class UserOrderController(
         getOrdersInCurse()
     }
 
-    private fun getOrdersInCurse() = CoroutineScope(Dispatchers.IO).async {
+    private fun getOrdersInCurse() = CoroutineScope(Dispatchers.IO).launch {
             // recover orders (that are not sent) from user
             userOrderUseCases.getOrdersUser(
                 userId = Properties.userLogged?._id!!,
@@ -55,6 +56,34 @@ class UserOrderController(
                 }
             )
         }
+
+    // setup orderlines (creates 1 orderLine per plate)
+    fun setOrderInCurse(restaurant: Restaurant) {
+        // lines of current order
+        val orderLines = arrayListOf<OrderLine>()
+        // create order lines
+        restaurant.menu?.forEach { plate ->
+            // get the orderLine for this plate if already exists
+            val matchLine = _state.value.order.orderLines.find { plate._id == it.plateId }
+
+            orderLines.add(
+                OrderLine(
+                    plateId = plate._id,
+                    plateName = plate.plateName,
+                    // if line already exists, use its quantity (the rest of data is the same as plate)
+                    quantity = matchLine?.quantity ?: 0,
+                    price = plate.price.toFloatOrNull() ?: 0f
+                )
+            )
+        }
+        _state.update { state ->
+            state.copy(
+                order = state.order.copy(
+                    orderLines = orderLines
+                )
+            )
+        }
+    }
 
     fun onEvent(event: UserOrderEvent) {
         CoroutineScope(Dispatchers.IO).launch {
@@ -83,33 +112,17 @@ class UserOrderController(
                         }
                     }
 
-                    // add, modify or delete new order line
-                    if (event.newOrderLine.quantity == 0){
-                        // delete line if quantity == 0
-                        val newOrderLines = _state.value.order.orderLines
-                        newOrderLines.removeIf { it.plateId == event.newOrderLine.plateId }
+                    // update orderLines
 
-                        // update value
-                        _state.update { state ->
-                            state.copy(
-                                order = state.order.copy(
-                                    orderLines = newOrderLines
-                                )
-                            )
-                        }
-                    } else {
-                        // add or modify if quantity > 0
-                        val indexOfNewLine = _state.value.order.orderLines.indexOf(event.newOrderLine)
-                        val newOrderLines = _state.value.order.orderLines
-
-                        if (indexOfNewLine == -1){
-                            // if it's a new line, add it
-                            newOrderLines.add(event.newOrderLine)
-                        } else {
-                            // if the line already exists, replace it
-                            newOrderLines[indexOfNewLine] = event.newOrderLine
-                        }
-                        // update values
+                    // get current lines
+                    val newOrderLines = arrayListOf<OrderLine>()
+                    newOrderLines.addAll(_state.value.order.orderLines)
+                    // find match
+                    val match = newOrderLines.find { it.plateId == event.newOrderLine.plateId }
+                    match?.let {
+                        // replace old order line
+                        val index = newOrderLines.indexOf(it)
+                        newOrderLines[index] = event.newOrderLine
                         _state.update { state ->
                             state.copy(
                                 order = state.order.copy(
@@ -119,21 +132,24 @@ class UserOrderController(
                         }
                     }
 
+                    // update order with orderLines w/quantity > 0
+                    val orderLinesToSend = arrayListOf<OrderLine>()
+                    orderLinesToSend.addAll(_state.value.order.orderLines)
+
+                    orderLinesToSend.removeIf { it.quantity <= 0 }
+
                     userOrderUseCases.updateOrder(
-                        order = _state.value.order,
+                        order = _state.value.order.copy(
+                            orderLines = orderLinesToSend
+                        ),
                         callback = { response, order ->
                             _state.update { state ->
                                 state.copy(
-                                    response = response
-                                )
-                            }
-                            // if order was sent (user sent it to be in progress)
-                            order?.let {
-                                _state.update { state ->
-                                    state.copy(
-                                        order = order
+                                    response = response,
+                                    order = state.order.copy(
+                                        _id = order?._id ?: state.order._id
                                     )
-                                }
+                                )
                             }
                         }
                     )
@@ -163,10 +179,11 @@ class UserOrderController(
                     }
                 }
 
+                // 'send' the order to restaurant (change state from 'created' to 'in progress')
                 is SendOrder -> {
                     _state.update { state ->
                         state.copy(
-                            order = event.order
+                            order = event.order.copy(state = Constants.OrderStates.IN_PROGRESS)
                         )
                     }
 
@@ -200,13 +217,7 @@ class UserOrderController(
         }
     }
 
-    suspend fun getCurrentOrder(): Order{
-        getOrdersInCurse().await()
-        return _state.value.order
-    }
-
     sealed class UiEvent {
         data class ShowDialog(val message: String): UiEvent()
-        data class UpdateUi(val order: Order): UiEvent()
     }
 }
