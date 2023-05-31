@@ -89,25 +89,29 @@ class UserOrderController(
         CoroutineScope(Dispatchers.IO).launch {
             when (event) {
                 is UpdateOrder -> {
-                    // if there's an order open, and it's not from the same restaurant
-                    if (
-                        _state.value.order.restaurantId.isNotEmpty() &&
-                        _state.value.order.restaurantId != (event.restaurant?._id ?: "")
-                    ){
-                        _eventFlow.emit(UiEvent.ShowDialog("Only one order per restaurant is permitted"))
-                        return@launch
-                    }
+                    // if a restaurant is passed, the order is being created, if not, the order
+                    // is being modified (from cart or order detail)
+                    event.restaurant?.let { restaurant ->
+                        // if there's an order open, and it's not from the same restaurant
+                        if (
+                            _state.value.order.restaurantId.isNotEmpty() &&
+                            _state.value.order.restaurantId != (restaurant._id ?: "")
+                        ) {
+                            _eventFlow.emit(UiEvent.ShowDialog("Only one order per restaurant is permitted"))
+                            return@launch
+                        }
 
-                    // set restaurant if it's not set already
-                    if (_state.value.order.restaurantId.isEmpty()){
-                        event.restaurant?.let {
-                            _state.update { state ->
-                                state.copy(
-                                    order = state.order.copy(
-                                        restaurantId = it._id!!,
-                                        restaurantName = it.name
+                        // set restaurant if it's not set already
+                        if (_state.value.order.restaurantId.isEmpty()) {
+                            restaurant.let {
+                                _state.update { state ->
+                                    state.copy(
+                                        order = state.order.copy(
+                                            restaurantId = it._id!!,
+                                            restaurantName = it.name
+                                        )
                                     )
-                                )
+                                }
                             }
                         }
                     }

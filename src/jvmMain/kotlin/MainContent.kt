@@ -36,6 +36,7 @@ import feature_user.domain.use_cases.GetOrdersUser
 import feature_user.domain.use_cases.UpdateOrder
 import feature_user.domain.use_cases.UserOrderUseCases
 import feature_user.presentation.UserOrderController
+import feature_user.presentation.cart.CartScreen
 import feature_user.presentation.main.UserMainScreen
 import feature_user.presentation.restaurant_details.RestaurantDetailsScreen
 import feature_users.data.UserRepositoryImpl
@@ -269,7 +270,10 @@ fun MainContent(){
                         )
                     },
                     cartContent = {
-                        Text(text = "Cart content")
+                        CartScreen(
+                            controller = UserOrderController(userOrderUseCases),
+                            onNavigateToCheckout = {} // todo
+                        )
                     },
                     ordersContent = {
                         Text(text = "Orders content")
