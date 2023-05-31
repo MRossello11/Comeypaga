@@ -93,7 +93,7 @@ fun RestaurantsScreen(
     }
 
     Dialog(
-        title = "Aviso",
+        title = "Warning",
         visible = showDialog,
         onCloseRequest = {
             showDialog = false
@@ -108,7 +108,7 @@ fun RestaurantsScreen(
         )
     }
     Dialog(
-        title = "Aviso",
+        title = "Warning",
         visible = showTwoOptionsDialog,
         onCloseRequest = {
             showTwoOptionsDialog = false

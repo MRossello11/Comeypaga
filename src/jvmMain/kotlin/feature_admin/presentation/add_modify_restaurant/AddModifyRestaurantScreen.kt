@@ -61,7 +61,7 @@ fun AddModifyRestaurantScreen(
     }
 
     Dialog(
-        title = "Aviso",
+        title = "Warning",
         visible = showDialog,
         onCloseRequest = {
             showDialog = false
