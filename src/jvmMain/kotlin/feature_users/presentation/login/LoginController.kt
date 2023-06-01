@@ -35,11 +35,11 @@ class LoginController(
                 }
             }
 
-            LoginEvent.Login -> {
+            is LoginEvent.Login -> {
                 CoroutineScope(Dispatchers.IO).launch{
                     try {
                         userUseCases.loginUseCase(
-                            loginRequest = LoginRequest(_loginState.value.username, _loginState.value.password),
+                            loginRequest = LoginRequest(event.username, event.password),
                             callback = { user, response ->
                                 _loginState.update { currentState ->
                                     currentState.copy(
