@@ -13,7 +13,8 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
 class UserOrderController(
-    private val userOrderUseCases: UserOrderUseCases
+    private val userOrderUseCases: UserOrderUseCases,
+    order: Order? = null
 ) {
     private val _state = MutableStateFlow(UserOrderState(
         Order(
@@ -27,7 +28,21 @@ class UserOrderController(
     val eventFlow = _eventFlow.asSharedFlow()
 
     init {
-        getOrdersInCurse()
+        // if an order is passed, use it
+        order?.let {
+            _state.update { state ->
+                state.copy(
+                    order = it.copy(
+                        userId = Properties.userLogged?._id!!,
+                        shippingAddress = Properties.userLogged?.address!!
+                    )
+                )
+            }
+        } ?: run {
+            // if no order is passed, get the orders from database
+            // if there is no created order, it will be created later
+            getOrdersInCurse()
+        }
     }
 
     private fun getOrdersInCurse() = CoroutineScope(Dispatchers.IO).launch {
@@ -36,7 +51,10 @@ class UserOrderController(
                 userId = Properties.userLogged?._id!!,
                 callback = { response, orders ->
                     // differ orders in curse from created order
-                    var order = Order(userId = Properties.userLogged?._id!!)
+                    var order = Order(
+                        userId = Properties.userLogged?._id!!,
+                        shippingAddress = Properties.userLogged?.address!!
+                    )
                     val ordersInCurse = arrayListOf<Order>()
                     orders.forEach {
                         if (it.state == Constants.OrderStates.CREATED) {
@@ -57,7 +75,7 @@ class UserOrderController(
             )
         }
 
-    // setup orderlines (creates 1 orderLine per plate)
+    // setup order lines (creates 1 orderLine per plate)
     fun setOrderInCurse(restaurant: Restaurant) {
         // lines of current order
         val orderLines = arrayListOf<OrderLine>()
@@ -164,9 +182,9 @@ class UserOrderController(
                     }
                 }
 
-                is CancelOrder -> {
+                CancelOrder -> {
                     userOrderUseCases.cancelOrder(
-                        order = event.order,
+                        order = _state.value.order,
                         callback = { response ->
                             _state.update { state ->
                                 state.copy(
@@ -177,6 +195,13 @@ class UserOrderController(
                     )
                     // handle response
                     if (_state.value.response.errorCode in 200..299){
+                        _state.update { state ->
+                            state.copy(
+                                order = state.order.copy(
+                                    state = Constants.OrderStates.CANCELED
+                                )
+                            )
+                        }
                         _eventFlow.emit(UiEvent.ShowDialog("Order canceled"))
                     } else {
                         _eventFlow.emit(UiEvent.ShowDialog(_state.value.response.message ?: "An error ocurred"))
@@ -184,10 +209,10 @@ class UserOrderController(
                 }
 
                 // 'send' the order to restaurant (change state from 'created' to 'in progress')
-                is SendOrder -> {
+                SendOrder -> {
                     _state.update { state ->
                         state.copy(
-                            order = event.order.copy(state = Constants.OrderStates.IN_PROGRESS)
+                            order = _state.value.order.copy(state = Constants.OrderStates.IN_PROGRESS)
                         )
                     }
 

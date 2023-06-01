@@ -16,8 +16,9 @@ import feature_user.domain.model.OrderLine
 fun OrderListItem(
     modifier: Modifier = Modifier,
     orderLine: OrderLine,
-    quantity: Int,
-    onChangeQuantity: (Int) -> Unit
+    canEdit: Boolean = true,
+    quantity: Int = 0,
+    onChangeQuantity: (Int) -> Unit = {}
 ) {
     var localQuantity by remember { mutableStateOf(quantity) }
     Row(
@@ -34,48 +35,54 @@ fun OrderListItem(
             )
         }
 
-        Box(
-            modifier = Modifier
-                .weight(1f)
-                .padding(end = 10.dp),
-            contentAlignment = Alignment.CenterEnd
-        ) {
-            // show - and + buttons (and quantity)
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.End
+        if (canEdit) {
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(end = 10.dp),
+                contentAlignment = Alignment.CenterEnd
             ) {
-                // minus button
-                PrimaryButton(
-                    modifier = Modifier.clip(CircleShape),
-                    content = "-",
-                    onClick = {
-                        if (localQuantity > 0) { // avoid negative quantities
-                            localQuantity--
+                // show - and + buttons (and quantity)
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.End
+                ) {
+                    // minus button
+                    PrimaryButton(
+                        modifier = Modifier.clip(CircleShape),
+                        content = "-",
+                        onClick = {
+                            if (localQuantity > 0) { // avoid negative quantities
+                                localQuantity--
+                                onChangeQuantity(localQuantity)
+                            }
+                        }
+                    )
+
+                    Spacer(modifier = Modifier.width(10.dp))
+
+                    // quantity text
+                    Text(
+                        text = localQuantity.toString(),
+                        fontSize = 17.sp
+                    )
+
+                    Spacer(modifier = Modifier.width(10.dp))
+
+                    PrimaryButton(
+                        modifier = Modifier.clip(CircleShape),
+                        content = "+",
+                        onClick = {
+                            localQuantity++
                             onChangeQuantity(localQuantity)
                         }
-                    }
-                )
-
-                Spacer(modifier = Modifier.width(10.dp))
-
-                // quantity text
-                Text(
-                    text = localQuantity.toString(),
-                    fontSize = 17.sp
-                )
-
-                Spacer(modifier = Modifier.width(10.dp))
-
-                PrimaryButton(
-                    modifier = Modifier.clip(CircleShape),
-                    content = "+",
-                    onClick = {
-                        localQuantity++
-                        onChangeQuantity(localQuantity)
-                    }
-                )
+                    )
+                }
             }
+        } else{
+            Text(
+                text = "qty. $localQuantity"
+            )
         }
     }
 }

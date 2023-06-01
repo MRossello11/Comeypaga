@@ -37,6 +37,7 @@ import feature_user.domain.use_cases.UpdateOrder
 import feature_user.domain.use_cases.UserOrderUseCases
 import feature_user.presentation.UserOrderController
 import feature_user.presentation.cart.CartScreen
+import feature_user.presentation.checkout.OrderDetailsScreen
 import feature_user.presentation.main.UserMainScreen
 import feature_user.presentation.restaurant_details.RestaurantDetailsScreen
 import feature_users.data.UserRepositoryImpl
@@ -272,7 +273,9 @@ fun MainContent(){
                     cartContent = {
                         CartScreen(
                             controller = UserOrderController(userOrderUseCases),
-                            onNavigateToCheckout = {} // todo
+                            onNavigateToCheckout = {
+                                navigation.push(Screen.OrderDetailsScreen(it))
+                            }
                         )
                     },
                     ordersContent = {
@@ -287,6 +290,16 @@ fun MainContent(){
                     restaurant = screen.restaurant,
                     controller = UserOrderController(userOrderUseCases),
                     onBack = navigation::pop
+                )
+            }
+
+            is Screen.OrderDetailsScreen -> {
+                OrderDetailsScreen(
+                    controller = UserOrderController(
+                        userOrderUseCases = userOrderUseCases,
+                        order = screen.order
+                    ),
+                    onBack = navigation::pop,
                 )
             }
         }

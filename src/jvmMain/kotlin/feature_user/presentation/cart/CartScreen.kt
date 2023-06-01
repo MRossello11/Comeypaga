@@ -16,6 +16,8 @@ import core.ComeypagaStyles
 import core.components.PrimaryButton
 import core.components.dialogs.OneOptionDialog
 import core.components.order.OrderListItem
+import feature_user.domain.model.Order
+import feature_user.domain.model.OrderLine
 import feature_user.presentation.UserOrderController
 import feature_user.presentation.UserOrderEvent
 import kotlinx.coroutines.flow.collectLatest
@@ -23,7 +25,7 @@ import kotlinx.coroutines.flow.collectLatest
 @Composable
 fun CartScreen(
     controller: UserOrderController,
-    onNavigateToCheckout: () -> Unit
+    onNavigateToCheckout: (Order) -> Unit
 ) {
     val viewState by controller.state.collectAsState()
 
@@ -73,71 +75,101 @@ fun CartScreen(
             fontSize = 13.sp
         )
 
-        LazyColumn {
-            // use the stateflow property to ensure UI updates
-            items(viewState.order.orderLines){ orderLine ->
-                // only show counted order lines
-                if (orderLine.quantity > 0) {
-                    OrderListItem(
-                        modifier = Modifier
-                            .fillMaxWidth(),
-                        orderLine = orderLine,
-                        quantity = orderLine.quantity,
-                        onChangeQuantity = {
-                            controller.onEvent(UserOrderEvent.UpdateOrder(newOrderLine = orderLine.copy(quantity = it)))
-                        }
+        if (totalPlates > 0) {
+
+            LazyColumn {
+                // use the stateflow property to ensure UI updates
+                items(viewState.order.orderLines) { orderLine ->
+                    // only show counted order lines
+                    if (orderLine.quantity > 0) {
+                        OrderListItem(
+                            modifier = Modifier
+                                .fillMaxWidth(),
+                            orderLine = orderLine,
+                            quantity = orderLine.quantity,
+                            onChangeQuantity = {
+                                controller.onEvent(UserOrderEvent.UpdateOrder(newOrderLine = orderLine.copy(quantity = it)))
+                            }
+                        )
+                    }
+                }
+                // < 10E commission
+                if (totalPrice < 10) {
+                    item {
+                        val lowerThanTenEuroCommission =
+                            OrderLine(plateName = "Order lower than 10€", quantity = 1, price = 3f)
+                        OrderListItem(
+                            modifier = Modifier
+                                .fillMaxWidth(),
+                            orderLine = lowerThanTenEuroCommission,
+                            quantity = lowerThanTenEuroCommission.quantity,
+                            canEdit = false,
+                        )
+                    }
+                }
+            }
+
+
+            // green line separator
+            Spacer(
+                modifier = Modifier
+                    .height(10.dp)
+                    .fillMaxWidth()
+                    .background(ComeypagaStyles.primaryColorGreen)
+            )
+
+            // subtotal
+            Row {
+                // subtotal text
+                Column(
+                    modifier = Modifier
+                        .weight(1f),
+                    horizontalAlignment = Alignment.Start
+                ) {
+                    Text(
+                        text = "Subtotal",
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 15.sp
+                    )
+                }
+
+                // subtotal price
+                Column(
+                    modifier = Modifier
+                        .weight(1f),
+                    horizontalAlignment = Alignment.End
+                ) {
+                    Text(
+                        text = "${String.format("%.2f", if (totalPrice < 10) totalPrice + 3 else totalPrice)}€",
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 15.sp
                     )
                 }
             }
-        }
-
-        // green line separator
-        Spacer(
-            modifier = Modifier
-                .height(10.dp)
-                .fillMaxWidth()
-                .background(ComeypagaStyles.primaryColorGreen)
-        )
-
-        // subtotal
-        Row {
-            // subtotal text
             Column(
-                modifier = Modifier
-                    .weight(1f),
-                horizontalAlignment = Alignment.Start
+                modifier = Modifier.fillMaxHeight(1f),
+                verticalArrangement = Arrangement.Bottom
             ) {
-                Text(
-                    text = "Subtotal",
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 15.sp
+                // checkout button
+                PrimaryButton(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 10.dp),
+                    onClick = {
+                        controller.onEvent(UserOrderEvent.SendOrder)
+                        onNavigateToCheckout(viewState.order)
+                    },
+                    content = "Confirm order (${
+                        String.format(
+                            "%.2f",
+                            if (totalPrice < 10) totalPrice + 3 else totalPrice
+                        )
+                    }€)"
                 )
             }
-
-            // subtotal price
-            Column(
-                modifier = Modifier
-                    .weight(1f),
-                horizontalAlignment = Alignment.End
-            ) {
-                Text(
-                    text = "${String.format("%.2f", totalPrice)}€",
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 15.sp
-                )
-            }
-        }
-        Column(
-            modifier = Modifier.fillMaxHeight(1f),
-            verticalArrangement = Arrangement.Bottom
-        ) {
-            // checkout button
-            PrimaryButton(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 10.dp),
-                onClick = onNavigateToCheckout,
-                content = "Checkout (${String.format("%.2f", totalPrice)}€)"
+        } else {
+            Text(
+                text = "No order in curse"
             )
         }
     }

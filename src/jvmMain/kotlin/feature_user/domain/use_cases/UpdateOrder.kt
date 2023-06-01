@@ -1,8 +1,6 @@
 package feature_user.domain.use_cases
 
 import core.Constants
-import core.Constants.OrderStates.CREATED
-import core.Constants.OrderStates.IN_PROGRESS
 import core.model.BaseResponse
 import feature_user.domain.model.Order
 import feature_user.domain.model.OrderLine
@@ -42,7 +40,7 @@ class UpdateOrder(
             _id = order._id,
             shippingAddress = order.shippingAddress,
             arrivalTime = dbDate.format(order.arrivalTime),
-            state = order._id?.let { IN_PROGRESS } ?: run { CREATED },
+            state = order.state,
             restaurantId = order.restaurantId,
             restaurantName = order.restaurantName,
             userId = order.userId,
