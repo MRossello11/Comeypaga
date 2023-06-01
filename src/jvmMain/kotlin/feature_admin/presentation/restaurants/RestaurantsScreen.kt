@@ -32,10 +32,11 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AdminRestaurantScreen(
+fun RestaurantsScreen(
     controller: AdminRestaurantsController,
     onAddRestaurant: () -> Unit,
-    onClickRestaurant: (Restaurant) -> Unit
+    onClickRestaurant: (Restaurant) -> Unit,
+    editMode: Boolean = false
 ){
     val restaurants = remember { mutableStateOf(listOf<Restaurant>()) }
 
@@ -92,7 +93,7 @@ fun AdminRestaurantScreen(
     }
 
     Dialog(
-        title = "Aviso",
+        title = "Warning",
         visible = showDialog,
         onCloseRequest = {
             showDialog = false
@@ -107,7 +108,7 @@ fun AdminRestaurantScreen(
         )
     }
     Dialog(
-        title = "Aviso",
+        title = "Warning",
         visible = showTwoOptionsDialog,
         onCloseRequest = {
             showTwoOptionsDialog = false
@@ -128,26 +129,26 @@ fun AdminRestaurantScreen(
     }
 
     Scaffold (
-        modifier = Modifier.fillMaxSize(),
         floatingActionButton = {
-            FloatingActionButton(
-                modifier = Modifier,
-                onClick = onAddRestaurant,
-                shape = CircleShape,
-                containerColor = ComeypagaStyles.primaryColorGreen,
-                contentColor = Color.White
-            ){
-                Icon(
-                    imageVector = Icons.Default.Add,
-                    contentDescription = "Add restaurant"
-                )
+            if (editMode) {
+                FloatingActionButton(
+                    modifier = Modifier,
+                    onClick = onAddRestaurant,
+                    shape = CircleShape,
+                    containerColor = ComeypagaStyles.primaryColorGreen,
+                    contentColor = Color.White
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Add,
+                        contentDescription = "Add restaurant"
+                    )
+                }
             }
         }
     ) {
         Column {
             LazyVerticalGrid(
                 modifier = Modifier
-                    .fillMaxSize()
                     .padding(start = 5.dp, end = 5.dp, top = 10.dp),
                 columns = GridCells.Fixed(2)
             ) {
@@ -160,7 +161,7 @@ fun AdminRestaurantScreen(
                                 onClickRestaurant(restaurant)
                             },
                         restaurant = restaurant,
-                        canDelete = true,
+                        canDelete = editMode,
                         onDeleteClick = {
                             controller.onEvent(AdminRestaurantsEvent.DeleteRestaurant(restaurant))
                         }
