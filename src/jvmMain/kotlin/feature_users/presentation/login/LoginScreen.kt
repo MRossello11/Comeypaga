@@ -167,7 +167,7 @@ fun LoginScreen(
             PrimaryButton(
                 modifier = Modifier.fillMaxWidth(),
                 onClick = {
-                    loginController.onEvent(LoginEvent.Login)
+                    loginController.onEvent(LoginEvent.Login(username = user, password = password))
                 },
                 content = "Login"
             )
