@@ -94,7 +94,7 @@ fun RidersScreen(
     }
 
     Dialog(
-        title = "Aviso",
+        title = "Warning",
         visible = showDialog,
         onCloseRequest = {
             showDialog = false
@@ -110,7 +110,7 @@ fun RidersScreen(
     }
 
     Dialog(
-        title = "Aviso",
+        title = "Warning",
         visible = showTwoOptionsDialog,
         onCloseRequest = {
             showTwoOptionsDialog = false

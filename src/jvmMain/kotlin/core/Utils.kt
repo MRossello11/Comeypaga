@@ -3,6 +3,19 @@ package core
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.toAwtImage
 import androidx.compose.ui.graphics.toComposeImageBitmap
+import core.Constants.OrderStates.CANCELED
+import core.Constants.OrderStates.CANCELED_TEXT
+import core.Constants.OrderStates.CREATED
+import core.Constants.OrderStates.CREATED_TEXT
+import core.Constants.OrderStates.DELIVERING
+import core.Constants.OrderStates.DELIVERING_TEXT
+import core.Constants.OrderStates.IN_PROGRESS
+import core.Constants.OrderStates.IN_PROGRESS_TEXT
+import core.Constants.OrderStates.LATE
+import core.Constants.OrderStates.LATE_TEXT
+import feature_user.domain.model.Order
+import feature_user.domain.model.OrderLine
+import feature_user.domain.model.OrderWS
 import feature_users.domain.model.InvalidUser
 import feature_users.domain.model.UserResponse
 import java.awt.FileDialog
@@ -120,5 +133,85 @@ object Utils {
             throw InvalidUser("Invalid date, must be in 'dd/MM/yyyy' format")
         }
         return dateToSend
+    }
+
+    fun mapOrdersWsToOrders(ordersWS: List<OrderWS>): ArrayList<Order> {
+        // get string date
+        val dbDate = SimpleDateFormat(Constants.DB_DATE)
+
+        val ordersToReturn = arrayListOf<Order>()
+
+        ordersWS.forEach { orderWS ->
+            val orderLines = arrayListOf<OrderLine>()
+            orderWS.orderLines.forEach { orderLineWS ->
+                orderLines.add(
+                    OrderLine(
+                        plateId = orderLineWS.plateId,
+                        plateName = orderLineWS.plateName,
+                        quantity = orderLineWS.quantity,
+                        price = orderLineWS.price.toFloat()
+                    )
+                )
+            }
+            ordersToReturn.add(
+                Order(
+                    _id = orderWS._id,
+                    shippingAddress = orderWS.shippingAddress,
+                    state = orderWS.state,
+                    arrivalTime = dbDate.parse(orderWS.arrivalTime),
+                    restaurantId = orderWS.restaurantId,
+                    restaurantName = orderWS.restaurantName,
+                    userId = orderWS.userId,
+                    orderLines = orderLines
+                )
+            )
+        }
+        return ordersToReturn
+    }
+
+    fun mapStringStateToCode(stringState: String): Int{
+        return when(stringState){
+            CREATED_TEXT -> {
+                CREATED
+            }
+            IN_PROGRESS_TEXT -> {
+                IN_PROGRESS
+            }
+            DELIVERING_TEXT -> {
+                DELIVERING
+            }
+            LATE_TEXT -> {
+                LATE
+            }
+            CANCELED_TEXT -> {
+                CANCELED
+            }
+            else -> {
+                CANCELED
+            }
+        }
+    }
+
+    fun mapStateCodeToString(state: Int): String{
+        return when(state){
+            CREATED -> {
+                CREATED_TEXT
+            }
+            IN_PROGRESS -> {
+                IN_PROGRESS_TEXT
+            }
+            DELIVERING -> {
+                DELIVERING_TEXT
+            }
+            LATE -> {
+                LATE_TEXT
+            }
+            CANCELED -> {
+                CANCELED_TEXT
+            }
+            else -> {
+                CANCELED_TEXT
+            }
+        }
     }
 }

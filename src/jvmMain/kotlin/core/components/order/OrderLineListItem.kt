@@ -1,11 +1,7 @@
-package core.components.restaurants
+package core.components.order
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -14,14 +10,13 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import core.components.PrimaryButton
-import core.model.Plate
+import feature_user.domain.model.OrderLine
 
 @Composable
-fun PlateListItem(
+fun OrderLineListItem(
     modifier: Modifier = Modifier,
-    plate: Plate,
-    editMode: Boolean = false,
-    onDeletePlate: (Plate) -> Unit,
+    orderLine: OrderLine,
+    canEdit: Boolean = true,
     quantity: Int = 0,
     onChangeQuantity: (Int) -> Unit = {}
 ) {
@@ -36,34 +31,17 @@ fun PlateListItem(
             // name and price
             Text(
                 modifier = Modifier.align(Alignment.Start),
-                text = "${plate.plateName} · ${plate.price}€"
+                text = "${orderLine.plateName} · ${orderLine.price}€"
             )
-
-            // description
-            plate.description?.let { description ->
-                Text(
-                    modifier = Modifier.align(Alignment.Start),
-                    text = description
-                )
-            }
         }
 
-        Box(
-            modifier = Modifier
-                .weight(1f)
-                .padding(end = 10.dp),
-            contentAlignment = Alignment.CenterEnd
-        ) {
-            if (editMode) {
-                IconButton(
-                    onClick = { onDeletePlate(plate) }
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Delete,
-                        contentDescription = "Delete"
-                    )
-                }
-            } else {
+        if (canEdit) {
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(end = 10.dp),
+                contentAlignment = Alignment.CenterEnd
+            ) {
                 // show - and + buttons (and quantity)
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
@@ -74,10 +52,10 @@ fun PlateListItem(
                         modifier = Modifier.clip(CircleShape),
                         content = "-",
                         onClick = {
-                                if (localQuantity > 0) { // avoid negative quantities
-                                    localQuantity--
-                                    onChangeQuantity(localQuantity)
-                                }
+                            if (localQuantity > 0) { // avoid negative quantities
+                                localQuantity--
+                                onChangeQuantity(localQuantity)
+                            }
                         }
                     )
 
@@ -101,6 +79,10 @@ fun PlateListItem(
                     )
                 }
             }
+        } else{
+            Text(
+                text = "qty. $localQuantity"
+            )
         }
     }
 }

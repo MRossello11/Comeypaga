@@ -55,7 +55,7 @@ fun RegistryScreen(
     }
 
     Dialog(
-        title = "Aviso",
+        title = "Warning",
         visible = showDialog,
         onCloseRequest = {
             showDialog = false
