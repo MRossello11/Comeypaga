@@ -12,6 +12,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import core.ComeypagaStyles
 import core.Constants
+import core.Constants.OrderStates.DELIVERING
 import core.components.AppHeader
 import core.components.PrimaryButton
 import core.components.dialogs.OneOptionDialog
@@ -20,9 +21,7 @@ import feature_user.domain.model.OrderLine
 import feature_user.presentation.UserOrderController
 import feature_user.presentation.UserOrderEvent
 import kotlinx.coroutines.flow.collectLatest
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
-import java.time.temporal.ChronoUnit
+import java.text.SimpleDateFormat
 
 // screen used when viewing details of an order
 @Composable
@@ -33,11 +32,8 @@ fun OrderDetailsScreen(
     val viewState by controller.state.collectAsState()
 
     // ETA formatter to show in 'HH:mm' format
-    val currentDate = LocalDateTime.now()
-    val newDate = currentDate.plus(30, ChronoUnit.MINUTES)
-    val formatter = DateTimeFormatter.ofPattern("HH:mm")
-
-    val newFormatted = newDate.format(formatter)
+    val formatter = SimpleDateFormat("HH:mm")
+    val arrivalTime = formatter.format(viewState.order.arrivalTime)
 
     // number of plates
     val totalPlates = viewState.order.orderLines.sumOf { it.quantity }
@@ -89,7 +85,7 @@ fun OrderDetailsScreen(
 
         // estimated time
         Text(
-            text = "Estimated time of arrival: $newFormatted hrs"
+            text = "Estimated time of arrival: $arrivalTime hrs"
         )
 
         // articles
@@ -109,7 +105,12 @@ fun OrderDetailsScreen(
                             .fillMaxWidth(),
                         orderLine = orderLine,
                         quantity = orderLine.quantity,
-                        canEdit = false,
+                        canEdit = viewState.order.state < DELIVERING,
+                        onChangeQuantity = {
+                            if (it > 0){
+                                controller.onEvent(UserOrderEvent.UpdateOrder(newOrderLine = orderLine.copy(quantity = it)))
+                            }
+                        }
                     )
                 }
             }
