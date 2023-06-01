@@ -1,4 +1,3 @@
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import com.arkivanov.decompose.ExperimentalDecomposeApi
@@ -39,6 +38,7 @@ import feature_user.presentation.UserOrderController
 import feature_user.presentation.cart.CartScreen
 import feature_user.presentation.checkout.OrderDetailsScreen
 import feature_user.presentation.main.UserMainScreen
+import feature_user.presentation.orders.OrdersScreen
 import feature_user.presentation.restaurant_details.RestaurantDetailsScreen
 import feature_users.data.UserRepositoryImpl
 import feature_users.data.data_source.UserDataSource
@@ -279,7 +279,12 @@ fun MainContent(){
                         )
                     },
                     ordersContent = {
-                        Text(text = "Orders content")
+                        OrdersScreen(
+                            controller = UserOrderController(userOrderUseCases),
+                            onClickOrder = {
+                                navigation.push(Screen.OrderDetailsScreen(it))
+                            }
+                        )
                     }
                 )
             }

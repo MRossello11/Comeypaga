@@ -167,11 +167,18 @@ class UserOrderController(
                         callback = { response, order ->
                             _state.update { state ->
                                 state.copy(
-                                    response = response,
-                                    order = state.order.copy(
-                                        _id = order?._id ?: state.order._id
-                                    )
+                                    response = response
                                 )
+                            }
+                            order?.let {
+                                _state.update { state ->
+                                    state.copy(
+                                        order = state.order.copy(
+                                            _id = it._id ?: state.order._id,
+                                            state = it.state
+                                        )
+                                    )
+                                }
                             }
                         }
                     )

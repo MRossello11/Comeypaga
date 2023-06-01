@@ -27,5 +27,11 @@ object Constants {
         const val LATE = 3
         const val DELIVERED = 4
         const val CANCELED = 5
+        const val CREATED_TEXT = "Created"
+        const val IN_PROGRESS_TEXT = "In progress"
+        const val DELIVERING_TEXT = "Delivering"
+        const val LATE_TEXT = "Late"
+        const val DELIVERED_TEXT = "Delivered"
+        const val CANCELED_TEXT = "Canceled"
     }
 }
