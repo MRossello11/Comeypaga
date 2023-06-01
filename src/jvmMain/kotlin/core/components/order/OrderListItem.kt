@@ -13,7 +13,7 @@ import core.components.PrimaryButton
 import feature_user.domain.model.OrderLine
 
 @Composable
-fun OrderListItem(
+fun OrderLineListItem(
     modifier: Modifier = Modifier,
     orderLine: OrderLine,
     canEdit: Boolean = true,

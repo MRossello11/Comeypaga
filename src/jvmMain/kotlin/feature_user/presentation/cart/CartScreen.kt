@@ -15,7 +15,7 @@ import androidx.compose.ui.window.Dialog
 import core.ComeypagaStyles
 import core.components.PrimaryButton
 import core.components.dialogs.OneOptionDialog
-import core.components.order.OrderListItem
+import core.components.order.OrderLineListItem
 import feature_user.domain.model.Order
 import feature_user.domain.model.OrderLine
 import feature_user.presentation.UserOrderController
@@ -82,7 +82,7 @@ fun CartScreen(
                 items(viewState.order.orderLines) { orderLine ->
                     // only show counted order lines
                     if (orderLine.quantity > 0) {
-                        OrderListItem(
+                        OrderLineListItem(
                             modifier = Modifier
                                 .fillMaxWidth(),
                             orderLine = orderLine,
@@ -98,7 +98,7 @@ fun CartScreen(
                     item {
                         val lowerThanTenEuroCommission =
                             OrderLine(plateName = "Order lower than 10€", quantity = 1, price = 3f)
-                        OrderListItem(
+                        OrderLineListItem(
                             modifier = Modifier
                                 .fillMaxWidth(),
                             orderLine = lowerThanTenEuroCommission,
