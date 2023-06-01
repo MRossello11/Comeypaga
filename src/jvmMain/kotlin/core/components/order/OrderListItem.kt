@@ -21,6 +21,7 @@ import core.Constants.OrderStates.IN_PROGRESS
 import core.Constants.OrderStates.IN_PROGRESS_TEXT
 import core.Constants.OrderStates.LATE
 import core.Constants.OrderStates.LATE_TEXT
+import core.Utils
 import core.components.DropMenu
 import feature_user.domain.model.Order
 import java.text.SimpleDateFormat
@@ -30,7 +31,8 @@ fun OrderListItem(
     modifier: Modifier = Modifier,
     order: Order,
     editMode: Boolean = false, // true for riders as they can edit the state
-    onStateSelected: (String) -> Unit = {} // when a rider selects a state
+    onStateSelected: (String) -> Unit = {}, // when a rider selects a state
+    availableStates: List<String> = listOf()
 ) {
     val stateText = when(order.state){
         CREATED -> {
@@ -69,11 +71,11 @@ fun OrderListItem(
 
         if (editMode){
             DropMenu(
-                items = listOf(DELIVERING_TEXT, LATE_TEXT),
+                items = availableStates,
                 onItemClick = {
                     onStateSelected(it)
                 },
-                selectedItem = ""
+                selectedItem = Utils.mapStateCodeToString(order.state)
             )
 
         } else {

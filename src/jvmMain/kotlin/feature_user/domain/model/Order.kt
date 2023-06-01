@@ -107,4 +107,9 @@ data class OrdersWrapper(
     val orders: List<OrderWS>
 )
 
+data class RiderOrders(
+    val riderOrders: List<OrderWS>,
+    val allOrders: List<OrderWS>
+)
+
 class InvalidOrderModification(message: String): Exception(message)

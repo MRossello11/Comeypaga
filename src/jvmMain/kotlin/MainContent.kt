@@ -28,6 +28,13 @@ import feature_admin.presentation.restaurants.AdminRestaurantsController
 import feature_admin.presentation.restaurants.RestaurantsScreen
 import feature_admin.presentation.riders.RidersController
 import feature_admin.presentation.riders.RidersScreen
+import feature_rider.data.data_source.RiderDataSource
+import feature_rider.data.repository.RiderRepositoryImpl
+import feature_rider.domain.use_cases.GetOrders
+import feature_rider.domain.use_cases.RiderUseCases
+import feature_rider.domain.use_cases.UpdateOrderState
+import feature_rider.presentation.RiderController
+import feature_rider.presentation.RiderOrdersScreen
 import feature_user.data.UserOrderRepositoryImpl
 import feature_user.data.data_source.UserOrderDataSource
 import feature_user.domain.use_cases.CancelOrder
@@ -107,6 +114,16 @@ fun MainContent(){
         getOrdersUser = GetOrdersUser(userOrderRepository)
     )
 
+    // rider
+    val riderRepository = RiderRepositoryImpl(
+        retrofit.create(
+            RiderDataSource::class.java)
+    )
+    val riderUseCases = RiderUseCases(
+        getOrders = GetOrders(riderRepository),
+        updateOrderState = UpdateOrderState(riderRepository)
+    )
+
     // navigation
     val navigation = remember { StackNavigation<Screen>() }
     ChildStack(
@@ -157,7 +174,10 @@ fun MainContent(){
             }
 
             is Screen.RiderMain -> {
-                println("Rider page")
+                RiderOrdersScreen(
+                    controller = RiderController(riderUseCases),
+                    onBack = navigation::pop
+                )
             }
 
             is Screen.AdminMain -> {
