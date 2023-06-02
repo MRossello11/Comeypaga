@@ -13,6 +13,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import java.util.*
 
 class UserOrderController(
     private val userOrderUseCases: UserOrderUseCases,
@@ -213,9 +214,18 @@ class UserOrderController(
 
                     orderLinesToSend.removeIf { it.quantity <= 0 }
 
+                    // set time to now +30 min
+                    val calendar = Calendar.getInstance()
+                    calendar.time = _state.value.order.arrivalTime
+                    // Add 30 minutes to the calendar
+                    calendar.add(Calendar.MINUTE, 30)
+                    // Get the updated Date object
+                    val updatedDate = calendar.time
+
                     userOrderUseCases.updateOrder(
                         order = _state.value.order.copy(
-                            orderLines = orderLinesToSend
+                            orderLines = orderLinesToSend,
+                            arrivalTime = updatedDate
                         ),
                         callback = { response, order ->
                             _state.update { state ->
@@ -276,8 +286,18 @@ class UserOrderController(
                         )
                     }
 
+                    // set time to now +30 min
+                    val calendar = Calendar.getInstance()
+                    calendar.time = _state.value.order.arrivalTime
+                    // Add 30 minutes to the calendar
+                    calendar.add(Calendar.MINUTE, 30)
+                    // Get the updated Date object
+                    val updatedDate = calendar.time
+
                     userOrderUseCases.updateOrder(
-                        order = _state.value.order,
+                        order = _state.value.order.copy(
+                            arrivalTime = updatedDate ?: Date()
+                        ),
                         callback = { response, order ->
                             _state.update { state ->
                                 state.copy(
