@@ -110,7 +110,8 @@ fun MainContent(){
     val userOrderUseCases = UserOrderUseCases(
         cancelOrder = CancelOrder(userOrderRepository),
         updateOrder = UpdateOrder(userOrderRepository),
-        getOrdersUser = GetOrdersUser(userOrderRepository)
+        getOrdersUser = GetOrdersUser(userOrderRepository),
+        getHistoricOrdersUser = GetHistoricOrdersUser(userOrderRepository)
     )
 
     // rider
@@ -302,6 +303,9 @@ fun MainContent(){
                             controller = UserOrderController(userOrderUseCases),
                             onClickOrder = {
                                 navigation.push(Screen.OrderDetailsScreen(it))
+                            },
+                            onNavigateToHistoricOrders = {
+                                navigation.push(Screen.HistoricUserOrders)
                             }
                         )
                     }
@@ -337,6 +341,16 @@ fun MainContent(){
                         order = screen.order
                     ),
                     onBack = navigation::pop
+                )
+            }
+
+            Screen.HistoricUserOrders -> {
+                OrdersScreen(
+                    controller = UserOrderController(userOrderUseCases, isHistoric = true),
+                    onClickOrder = {
+                        navigation.push(Screen.OrderDetailsScreen(it))
+                    },
+                    isHistoric = true
                 )
             }
         }

@@ -34,4 +34,6 @@ sealed class Screen: Parcelable {
     data class OrderDetailsScreen(val order: Order): Screen()
     @Parcelize
     data class TicketScreen(val order: Order): Screen()
+    @Parcelize
+    object HistoricUserOrders: Screen()
 }

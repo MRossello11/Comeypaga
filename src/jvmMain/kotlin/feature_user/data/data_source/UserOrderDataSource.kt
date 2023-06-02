@@ -27,4 +27,8 @@ interface UserOrderDataSource {
     suspend fun getRestaurant(
         @Path("id") _id: String
     ): Response<RestaurantWrapper>
+    @GET("${Constants.WebService.BASE_URL}${Constants.WebService.ORDERS}${Constants.WebService.USER}${Constants.WebService.HISTORIC}/{userId}")
+    suspend fun getHistoricOrdersUser(
+        @Path("userId") userId: String
+    ): Response<OrdersWrapper>
 }

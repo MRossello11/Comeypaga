@@ -11,16 +11,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import core.Constants.OrderStates.CANCELED
-import core.Constants.OrderStates.CANCELED_TEXT
-import core.Constants.OrderStates.CREATED
-import core.Constants.OrderStates.CREATED_TEXT
-import core.Constants.OrderStates.DELIVERING
-import core.Constants.OrderStates.DELIVERING_TEXT
-import core.Constants.OrderStates.IN_PROGRESS
-import core.Constants.OrderStates.IN_PROGRESS_TEXT
-import core.Constants.OrderStates.LATE
-import core.Constants.OrderStates.LATE_TEXT
 import core.Utils
 import core.components.DropMenu
 import feature_user.domain.model.Order
@@ -34,26 +24,7 @@ fun OrderListItem(
     onStateSelected: (String) -> Unit = {}, // when a rider selects a state
     availableStates: List<String> = listOf()
 ) {
-    val stateText = when(order.state){
-        CREATED -> {
-            CREATED_TEXT
-        }
-        IN_PROGRESS -> {
-            IN_PROGRESS_TEXT
-        }
-        DELIVERING -> {
-            DELIVERING_TEXT
-        }
-        LATE -> {
-            LATE_TEXT
-        }
-        CANCELED ->{
-            CANCELED_TEXT
-        }
-        else ->{
-            "Unknown"
-        }
-    }
+    val stateText = Utils.mapStateCodeToString(order.state)
 
     val formatter = SimpleDateFormat("HH:mm")
     val currentFormatted = formatter.format(order.arrivalTime)

@@ -7,6 +7,8 @@ import core.Constants.OrderStates.CANCELED
 import core.Constants.OrderStates.CANCELED_TEXT
 import core.Constants.OrderStates.CREATED
 import core.Constants.OrderStates.CREATED_TEXT
+import core.Constants.OrderStates.DELIVERED
+import core.Constants.OrderStates.DELIVERED_TEXT
 import core.Constants.OrderStates.DELIVERING
 import core.Constants.OrderStates.DELIVERING_TEXT
 import core.Constants.OrderStates.IN_PROGRESS
@@ -186,6 +188,9 @@ object Utils {
             CANCELED_TEXT -> {
                 CANCELED
             }
+            DELIVERED_TEXT -> {
+                DELIVERED
+            }
             else -> {
                 CANCELED
             }
@@ -208,6 +213,9 @@ object Utils {
             }
             CANCELED -> {
                 CANCELED_TEXT
+            }
+            DELIVERED -> {
+                DELIVERED_TEXT
             }
             else -> {
                 CANCELED_TEXT

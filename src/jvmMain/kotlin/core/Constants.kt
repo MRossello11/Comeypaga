@@ -8,6 +8,7 @@ object Constants {
         const val MENU = "/menu"
         const val RIDER = "/rider"
         const val ORDERS = "/orders"
+        const val HISTORIC = "/historic"
     }
 
     const val DB_DATE ="yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"

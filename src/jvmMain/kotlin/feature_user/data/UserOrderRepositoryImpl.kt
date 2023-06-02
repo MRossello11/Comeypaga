@@ -9,6 +9,7 @@ import feature_user.data.data_source.UserOrderDataSource
 import feature_user.domain.model.OrderWS
 import feature_user.domain.model.OrdersWrapper
 import feature_user.domain.repository.UserOrderRepository
+import retrofit2.Response
 
 class UserOrderRepositoryImpl(
     private val userOrderDataSource: UserOrderDataSource
@@ -16,19 +17,7 @@ class UserOrderRepositoryImpl(
     override suspend fun getOrdersUser(userId: String, callback: (response: BaseResponse, orders: OrdersWrapper?) -> Unit) {
         val response = userOrderDataSource.getOrdersUser(userId)
 
-        if (response.code() in 200..299) {
-            response.body()?.let {
-                callback(BaseResponse(response.code(), response.message()), response.body())
-            } ?: run {
-                callback(BaseResponse(response.code(), "An error occurred"), null)
-            }
-        } else if(response.code() == 401 || response.code() == 403){
-            callback(BaseResponse(response.code(), "You are not authorized"), null)
-        }else {
-            val errorBody = response.errorBody()?.string()
-            val errorResponse = Gson().fromJson(errorBody, ErrorResponse::class.java)
-            callback(BaseResponse(response.code(), errorResponse.message ?: "An error occurred"), null)
-        }
+        handleOrdersWrapperResponse(response, callback)
 
     }
 
@@ -68,6 +57,34 @@ class UserOrderRepositoryImpl(
             } ?: run{
                 callback(BaseResponse(response.code(), "An error occurred"), null)
             }
+        } else {
+            val errorBody = response.errorBody()?.string()
+            val errorResponse = Gson().fromJson(errorBody, ErrorResponse::class.java)
+            callback(BaseResponse(response.code(), errorResponse.message ?: "An error occurred"), null)
+        }
+    }
+
+    override suspend fun getHistoricOrders(
+        userId: String,
+        callback: (response: BaseResponse, orders: OrdersWrapper?) -> Unit
+    ) {
+        val response = userOrderDataSource.getHistoricOrdersUser(userId)
+
+        handleOrdersWrapperResponse(response, callback)
+    }
+
+    private fun handleOrdersWrapperResponse(
+        response: Response<OrdersWrapper>,
+        callback: (response: BaseResponse, orders: OrdersWrapper?) -> Unit
+    ) {
+        if (response.code() in 200..299) {
+            response.body()?.let {
+                callback(BaseResponse(response.code(), response.message()), response.body())
+            } ?: run {
+                callback(BaseResponse(response.code(), "An error occurred"), null)
+            }
+        } else if (response.code() == 401 || response.code() == 403) {
+            callback(BaseResponse(response.code(), "You are not authorized"), null)
         } else {
             val errorBody = response.errorBody()?.string()
             val errorResponse = Gson().fromJson(errorBody, ErrorResponse::class.java)

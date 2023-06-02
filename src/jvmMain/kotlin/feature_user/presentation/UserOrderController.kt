@@ -16,7 +16,8 @@ import kotlinx.coroutines.launch
 
 class UserOrderController(
     private val userOrderUseCases: UserOrderUseCases,
-    order: Order? = null
+    order: Order? = null,
+    isHistoric: Boolean = false
 ) {
     private val _state = MutableStateFlow(UserOrderState(
         Order(
@@ -44,20 +45,47 @@ class UserOrderController(
     }
 
     init {
-        // if an order is passed, use it
-        order?.let {
-            _state.update { state ->
-                state.copy(
-                    order = it.copy(
-                        userId = Properties.userLogged?._id!!,
-                        shippingAddress = Properties.userLogged?.address!!
-                    )
+        if (isHistoric){
+            CoroutineScope(Dispatchers.IO).launch {
+                userOrderUseCases.getHistoricOrdersUser(
+                    userId = Properties.userLogged?._id!!,
+                    callback = { response, orders ->
+                        if (response.errorCode in 200..299) {
+                            // set state
+                            _state.update { state ->
+                                state.copy(
+                                    ordersInCurse = orders,
+                                    response = response
+                                )
+                            }
+                        } else {
+                            launch {
+                                _eventFlow.emit(
+                                    UiEvent.ShowDialog(
+                                        response.message ?: "An error ocurred retrieving historic losses"
+                                    )
+                                )
+                            }
+                        }
+                    }
                 )
             }
-        } ?: run {
-            // if no order is passed, get the orders from database
-            // if there is no created order, it will be created later
-            getAllOrders(true)
+        } else {
+            // if an order is passed, use it
+            order?.let {
+                _state.update { state ->
+                    state.copy(
+                        order = it.copy(
+                            userId = Properties.userLogged?._id!!,
+                            shippingAddress = Properties.userLogged?.address!!
+                        )
+                    )
+                }
+            } ?: run {
+                // if no order is passed, get the orders from database
+                // if there is no created order, it will be created later
+                getAllOrders(true)
+            }
         }
     }
 

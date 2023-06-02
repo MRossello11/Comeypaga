@@ -10,4 +10,5 @@ interface UserOrderRepository {
     suspend fun updateOrder(order: OrderWS, callback: (response: BaseResponse, order: OrderWS?) -> Unit)
     suspend fun cancelOrder(orderId: String, callback: (response: BaseResponse) -> Unit)
     suspend fun getRestaurantData(restaurantId: String, callback: (response: BaseResponse, restaurant: Restaurant?) -> Unit)
+    suspend fun getHistoricOrders(userId: String, callback: (response: BaseResponse, orders: OrdersWrapper?) -> Unit)
 }
