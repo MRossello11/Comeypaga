@@ -1,6 +1,7 @@
 package feature_user.presentation.orders
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -11,6 +12,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import core.ComeypagaStyles
+import core.components.AppHeader
 import core.components.order.OrderListItem
 import feature_user.domain.model.Order
 import feature_user.presentation.UserOrderController
@@ -21,7 +23,8 @@ fun OrdersScreen(
     controller: UserOrderController,
     onClickOrder: (Order) -> Unit,
     isHistoric: Boolean = false,
-    onNavigateToHistoricOrders: () -> Unit = {}
+    onNavigateToHistoricOrders: () -> Unit = {},
+    onBack: () -> Unit = {}
 ) {
 
     val viewState by controller.state.collectAsState()
@@ -46,16 +49,24 @@ fun OrdersScreen(
             }
         }
     ) {
-        LazyColumn {
-            items(viewState.ordersInCurse) { orderInCurse ->
-                OrderListItem(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable {
-                            onClickOrder(orderInCurse)
-                        },
-                    order = orderInCurse
+        Column {
+            if (isHistoric) {
+                AppHeader(
+                    title = "Historic orders",
+                    onClickBack = onBack
                 )
+            }
+            LazyColumn {
+                items(viewState.ordersInCurse) { orderInCurse ->
+                    OrderListItem(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable {
+                                onClickOrder(orderInCurse)
+                            },
+                        order = orderInCurse
+                    )
+                }
             }
         }
     }

@@ -306,7 +306,8 @@ fun MainContent(){
                             },
                             onNavigateToHistoricOrders = {
                                 navigation.push(Screen.HistoricUserOrders)
-                            }
+                            },
+                            onBack = navigation::pop
                         )
                     }
                 )
@@ -350,7 +351,8 @@ fun MainContent(){
                     onClickOrder = {
                         navigation.push(Screen.OrderDetailsScreen(it))
                     },
-                    isHistoric = true
+                    isHistoric = true,
+                    onBack = navigation::pop
                 )
             }
         }
