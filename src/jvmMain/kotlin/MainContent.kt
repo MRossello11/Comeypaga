@@ -37,16 +37,15 @@ import feature_rider.presentation.RiderController
 import feature_rider.presentation.RiderOrdersScreen
 import feature_user.data.UserOrderRepositoryImpl
 import feature_user.data.data_source.UserOrderDataSource
-import feature_user.domain.use_cases.CancelOrder
-import feature_user.domain.use_cases.GetOrdersUser
-import feature_user.domain.use_cases.UpdateOrder
-import feature_user.domain.use_cases.UserOrderUseCases
+import feature_user.domain.use_cases.*
 import feature_user.presentation.UserOrderController
 import feature_user.presentation.cart.CartScreen
 import feature_user.presentation.checkout.OrderDetailsScreen
 import feature_user.presentation.main.UserMainScreen
 import feature_user.presentation.orders.OrdersScreen
 import feature_user.presentation.restaurant_details.RestaurantDetailsScreen
+import feature_user.presentation.ticket.TicketController
+import feature_user.presentation.ticket.TicketScreen
 import feature_users.data.UserRepositoryImpl
 import feature_users.data.data_source.UserDataSource
 import feature_users.domain.model.Role
@@ -325,6 +324,19 @@ fun MainContent(){
                         order = screen.order
                     ),
                     onBack = navigation::pop,
+                    onClickViewTicket = {
+                        navigation.push(Screen.TicketScreen(it))
+                    }
+                )
+            }
+
+            is Screen.TicketScreen -> {
+                TicketScreen(
+                    controller = TicketController(
+                        getRestaurantData = GetRestaurantData(userOrderRepository),
+                        order = screen.order
+                    ),
+                    onBack = navigation::pop
                 )
             }
         }

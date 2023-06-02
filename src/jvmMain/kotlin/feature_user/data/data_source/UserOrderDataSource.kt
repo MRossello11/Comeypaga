@@ -2,6 +2,7 @@ package feature_user.data.data_source
 
 import core.Constants
 import core.model.BaseResponse
+import core.model.RestaurantWrapper
 import feature_user.domain.model.OrderWS
 import feature_user.domain.model.OrderWrapper
 import feature_user.domain.model.OrdersWrapper
@@ -22,4 +23,8 @@ interface UserOrderDataSource {
     suspend fun cancelOrder(
         @Path("id") _id: String
     ): Response<BaseResponse>
+    @GET("${Constants.WebService.BASE_URL}${Constants.WebService.RESTAURANTS}/{id}")
+    suspend fun getRestaurant(
+        @Path("id") _id: String
+    ): Response<RestaurantWrapper>
 }

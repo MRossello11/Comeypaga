@@ -32,4 +32,6 @@ sealed class Screen: Parcelable {
     data class RestaurantDetailsScreen(val restaurant: Restaurant): Screen()
     @Parcelize
     data class OrderDetailsScreen(val order: Order): Screen()
+    @Parcelize
+    data class TicketScreen(val order: Order): Screen()
 }

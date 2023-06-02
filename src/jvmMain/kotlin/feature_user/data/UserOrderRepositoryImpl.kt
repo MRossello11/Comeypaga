@@ -4,6 +4,7 @@ import com.google.gson.Gson
 import core.handleBaseResponse
 import core.model.BaseResponse
 import core.model.ErrorResponse
+import core.model.Restaurant
 import feature_user.data.data_source.UserOrderDataSource
 import feature_user.domain.model.OrderWS
 import feature_user.domain.model.OrdersWrapper
@@ -53,5 +54,24 @@ class UserOrderRepositoryImpl(
         val response = userOrderDataSource.cancelOrder(orderId)
 
         handleBaseResponse(response, callback)
+    }
+
+    override suspend fun getRestaurantData(
+        restaurantId: String,
+        callback: (response: BaseResponse, restaurant: Restaurant?) -> Unit
+    ) {
+        val response = userOrderDataSource.getRestaurant(restaurantId)
+
+        if (response.code() in 200..299){
+            response.body()?.let {
+                callback(BaseResponse(response.code(), response.message()), it.restaurant)
+            } ?: run{
+                callback(BaseResponse(response.code(), "An error occurred"), null)
+            }
+        } else {
+            val errorBody = response.errorBody()?.string()
+            val errorResponse = Gson().fromJson(errorBody, ErrorResponse::class.java)
+            callback(BaseResponse(response.code(), errorResponse.message ?: "An error occurred"), null)
+        }
     }
 }

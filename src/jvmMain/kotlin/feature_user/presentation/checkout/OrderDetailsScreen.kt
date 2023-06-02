@@ -18,6 +18,7 @@ import core.components.AppHeader
 import core.components.PrimaryButton
 import core.components.dialogs.OneOptionDialog
 import core.components.order.OrderLineListItem
+import feature_user.domain.model.Order
 import feature_user.domain.model.OrderLine
 import feature_user.presentation.UserOrderController
 import feature_user.presentation.UserOrderEvent
@@ -28,7 +29,8 @@ import java.text.SimpleDateFormat
 @Composable
 fun OrderDetailsScreen(
     controller: UserOrderController,
-    onBack: () -> Unit
+    onBack: () -> Unit,
+    onClickViewTicket: (Order) -> Unit
 ){
     val viewState by controller.state.collectAsState()
 
@@ -152,7 +154,9 @@ fun OrderDetailsScreen(
                     modifier = Modifier
                         .weight(1f)
                         .padding(horizontal = 5.dp),
-                    onClick = {}, // todo see ticket
+                    onClick = {
+                        onClickViewTicket(viewState.order)
+                    },
                     content = "View ticket"
                 )
             }
