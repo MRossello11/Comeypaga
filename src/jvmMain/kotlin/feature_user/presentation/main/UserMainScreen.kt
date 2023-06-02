@@ -17,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import core.ComeypagaStyles
+import core.Utils
 import core.components.AppHeader
 
 var currentTab: MutableState<Int> = mutableStateOf(0)
@@ -36,7 +37,11 @@ fun UserMainScreen(
                 2 -> "Orders"
                 else -> "Come y paga" // shouldn't be seen, but just in case
             },
-            onClickBack = onBack
+            onClickBack = {
+                onBack()
+                // stop getting orders
+                Utils.getOrdersUserMode = false
+            }
         )
 
         Column(

@@ -21,6 +21,8 @@ fun OrdersScreen(
 
     val viewState by controller.state.collectAsState()
 
+    controller.setGetOrdersUserMode(true)
+
     Column {
         LazyColumn {
             items(viewState.ordersInCurse) { orderInCurse ->

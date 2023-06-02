@@ -2,6 +2,7 @@ package feature_user.presentation
 
 import core.Constants
 import core.Properties
+import core.Utils.getOrdersUserMode
 import core.model.Restaurant
 import feature_user.domain.model.Order
 import feature_user.domain.model.OrderLine
@@ -9,6 +10,7 @@ import feature_user.domain.use_cases.UserOrderUseCases
 import feature_user.presentation.UserOrderEvent.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
@@ -27,6 +29,20 @@ class UserOrderController(
     private val _eventFlow = MutableSharedFlow<UiEvent>()
     val eventFlow = _eventFlow.asSharedFlow()
 
+    // thread to update the orders list every 5 seconds
+    private val getOrdersThread = object: Thread() {
+        override fun run() {
+            super.run()
+            CoroutineScope(Dispatchers.IO).launch {
+                while (getOrdersUserMode){
+                    // get the latest orders every 5 seconds
+                    getAllOrders(false)
+                    delay(5000)
+                }
+            }
+        }
+    }
+
     init {
         // if an order is passed, use it
         order?.let {
@@ -41,11 +57,11 @@ class UserOrderController(
         } ?: run {
             // if no order is passed, get the orders from database
             // if there is no created order, it will be created later
-            getOrdersInCurse()
+            getAllOrders(true)
         }
     }
 
-    private fun getOrdersInCurse() = CoroutineScope(Dispatchers.IO).launch {
+    private fun getAllOrders(overwriteCurrentOrder: Boolean) = CoroutineScope(Dispatchers.IO).launch {
             // recover orders (that are not sent) from user
             userOrderUseCases.getOrdersUser(
                 userId = Properties.userLogged?._id!!,
@@ -64,12 +80,21 @@ class UserOrderController(
                         }
                     }
 
-                    _state.update { state ->
-                        state.copy(
-                            order = order,
-                            ordersInCurse = ordersInCurse,
-                            response = response
-                        )
+                    if (overwriteCurrentOrder) {
+                        _state.update { state ->
+                            state.copy(
+                                order = order,
+                                ordersInCurse = ordersInCurse,
+                                response = response
+                            )
+                        }
+                    } else {
+                        _state.update { state ->
+                            state.copy(
+                                ordersInCurse = ordersInCurse,
+                                response = response
+                            )
+                        }
                     }
                 }
             )
@@ -250,6 +275,14 @@ class UserOrderController(
                 }
             }
 
+        }
+    }
+
+    fun setGetOrdersUserMode(getOrders: Boolean){
+        getOrdersUserMode = getOrders
+
+        if (getOrders){
+            getOrdersThread.start()
         }
     }
 
