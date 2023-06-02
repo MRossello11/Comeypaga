@@ -64,7 +64,12 @@ fun RiderOrdersScreen(
     Column {
         AppHeader(
             title = "Rider page",
-            onClickBack = onBack
+            onClickBack = {
+                onBack()
+                // stop getting orders
+                controller.setGetOrdersMode(false)
+            }
+
         )
         TabRow(selectedTabIndex = currentTab.value) {
             Tab(

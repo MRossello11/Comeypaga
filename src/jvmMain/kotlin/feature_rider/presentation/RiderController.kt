@@ -6,6 +6,7 @@ import feature_rider.domain.use_cases.RiderUseCases
 import feature_user.domain.model.Order
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
@@ -22,7 +23,27 @@ class RiderController(
     private val _eventFlow = MutableSharedFlow<UiEvent>()
     val eventFlow = _eventFlow.asSharedFlow()
 
+    // flag to set get orders thread to get orders (true) or not (false)
+    private var getOrdersMode = true
+
+    // thread to retrieve the latest orders every 5 seconds
+    val getOrdersThread = object: Thread() {
+        override fun run() {
+            super.run()
+            CoroutineScope(Dispatchers.IO).launch {
+                while (getOrdersMode) {
+                    // get orders every 5 seconds
+                    getOrdersRider()
+                    delay(5000)
+                }
+            }
+        }
+    }
     init {
+        getOrdersThread.start()
+    }
+
+    private fun getOrdersRider() {
         CoroutineScope(Dispatchers.IO).launch {
             // get orders
             riderUseCases.getOrders(
@@ -38,8 +59,12 @@ class RiderController(
                 }
             )
             // handle response
-            if (_state.value.response.errorCode !in 200..299){
-                _eventFlow.emit(UiEvent.ShowDialog(_state.value.response.message ?: "An error occurred updating getting the orders"))
+            if (_state.value.response.errorCode !in 200..299) {
+                _eventFlow.emit(
+                    UiEvent.ShowDialog(
+                        _state.value.response.message ?: "An error occurred updating getting the orders"
+                    )
+                )
             }
         }
     }
@@ -76,6 +101,16 @@ class RiderController(
             }
         }
     }
+
+    fun setGetOrdersMode(getOrders: Boolean){
+        getOrdersMode = getOrders
+
+        // if set mode to true, start the thread
+        if (getOrdersMode){
+            getOrdersThread.start()
+        }
+    }
+
     sealed class UiEvent {
         data class ShowDialog(val message: String): UiEvent()
     }
